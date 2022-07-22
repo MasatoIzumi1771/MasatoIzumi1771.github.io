@@ -1,0 +1,58 @@
+
+*{
+    font-family: "Arial", "メイリオ";
+    background-color:white;
+    color:black;
+
+}
+
+.title{
+    font-size:24px;
+    color:rgb(255, 255, 255);
+    line-height:normal;
+    margin: 0px;
+    height: 50px;
+    width: 100vw;
+    background-color: rgb(44, 138, 246);
+
+}
+
+.name{
+    font-size: 36px;
+    color:black;
+    line-height: 1mm;
+
+}
+
+.namee{
+    font-size: 16px;
+    color: darkgray;
+    line-height: 1mm;
+}
+
+.top{
+    font-size: 36px;
+    color: rgb(61, 177, 249);
+
+
+}
+
+body {
+    font-family:'Noto Sans JP',sans-serif;
+    background-color:#f6f5f4;
+ }
+ 
+ .side {
+   background-color:white;
+   width:100px;
+   height:300px;
+   text-align:center;
+ } 
+ 
+ .content {
+   margin-left:10px;/*サイドバーとメインコンテンツの間に隙間                    をあけた*/
+ }
+ 
+ article {
+   display:flex;/*サイドバーとメインコンテンツを横並びにする                指定をした*/
+ }
