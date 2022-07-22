@@ -52,3 +52,19 @@ body{
  article {
    display:flex;/*サイドバーとメインコンテンツを横並びにする                指定をした*/
  }
+
+ table {
+    font-size: 16px;
+    width: 150%;
+    border-collapse: collapse;
+    border-spacing: 0;
+   }
+   table th {
+    padding: 10px;
+    border-bottom: solid 4px #778ca3;
+    color: #778ca3
+   }
+   table td {
+    padding: 10px;
+    border-bottom: solid 1px #778ca3;
+   }
