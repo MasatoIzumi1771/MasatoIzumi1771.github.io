@@ -1,10 +1,12 @@
 
-*{
+body{
     font-family: "Arial", "メイリオ";
     background-color:white;
     color:black;
+    font-size: 18px;
 
 }
+
 
 .title{
     font-size:24px;
@@ -12,8 +14,8 @@
     line-height:normal;
     margin: 0px;
     height: 50px;
-    width: 100vw;
-    background-color: rgb(44, 138, 246);
+    width: 200vw;
+    background-color: #013a7c;
 
 }
 
@@ -25,23 +27,17 @@
 }
 
 .namee{
-    font-size: 16px;
+    font-size: 20px;
     color: darkgray;
     line-height: 1mm;
 }
 
 .top{
-    font-size: 36px;
-    color: rgb(61, 177, 249);
-
-
+    font-size:36px;
+    line-height: 1mm;
 }
 
-body {
-    font-family:'Noto Sans JP',sans-serif;
-    background-color:#f6f5f4;
- }
- 
+
  .side {
    background-color:white;
    width:100px;
