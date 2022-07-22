@@ -33,10 +33,6 @@ body{
     line-height: 1mm;
 }
 
-.top{
-    font-size:30px;
-    line-height: 1mm;
-}
 
 
  .side {
@@ -72,6 +68,8 @@ body{
    }
 
    .top {
+    font-size:30px;
+    line-height: 0.5;
     padding: 0.25em 0.5em;/*上下 左右の余白*/
     background: transparent;/*背景透明に*/
     border-left: solid 5px #013a7c;/*左線*/
