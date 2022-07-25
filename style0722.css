@@ -121,3 +121,16 @@ body{
     top: 10px;
     z-index: 1;
   }
+
+  img{
+    height: 300px;
+    width: 200px;
+    object-fit: contain;
+    border-radius: 0%;
+}
+.img_nhk{
+  height: 200px;
+  width: 300px;
+  object-fit: contain;
+  border-radius: 0%;
+}
