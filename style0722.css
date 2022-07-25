@@ -112,6 +112,7 @@ body{
     margin-bottom: 20px;
   }
   .sidebar__item--fixed {
+    text-align:center;
 
     position: sticky;
     margin-bottom: 0;
