@@ -133,14 +133,10 @@ body{
 
 @media screen and (max-width: 768px) {
   p{
-      background-color: white;
-       color:black;
    }
 }
 
 @media screen and (max-width: 480px) {
   p{
-      background-color: white;
-       color:black;
    }
 }
