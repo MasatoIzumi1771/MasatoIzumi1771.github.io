@@ -130,7 +130,6 @@ body{
   object-fit: contain;
   border-radius: 0%;
 }
-
 @media screen and (max-width: 768px) {
   p{
    }
