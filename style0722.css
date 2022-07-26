@@ -4,7 +4,7 @@ body{
     background-color:white;
     color:black;
     font-size: 16px;
-    width:900px;
+    width:1000px;
     margin-right:auto;
     margin-left:auto;
 
@@ -14,10 +14,9 @@ body{
     font-size:24px;
     padding: 0.2em 1em;
     color:rgb(255, 255, 255);
-    line-height:normal;
+    line-height: 50px;
     margin: 0px;
     height: 50px;
-    width: 1233px;
     background-color: #778ca3;
 
 }
@@ -93,17 +92,15 @@ body{
   }
 
   .container {
-    width: 1300px;
     display: -webkit-flex;
     display: flex;
   }
   .main {
     display: block;
-    width: 1100px;
-    margin-right: 20px;
+    width: 840px;
   }
   .sidebar {
-    width: 320px;
+    width: 160px;
     text-align:center;
   }
   .sidebar__item {
