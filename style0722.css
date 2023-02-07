@@ -61,16 +61,17 @@ body{
   }
 
   .t1{
-    width: 12%;
+    width: 11%;
 
   }
 
   .t2{
-    width: 12%;
+    width: 11%;
 
   }
   .t3{
-    width: 76%;
+    font-size: 12px;
+    width: 78%;
 
   }
 
