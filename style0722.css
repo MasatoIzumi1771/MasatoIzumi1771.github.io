@@ -60,6 +60,21 @@ body{
     border-left: solid 5px #013a7c;/*左線*/
   }
 
+  .t1{
+    width: 12%;
+
+  }
+
+  .t2{
+    width: 12%;
+
+  }
+  .t3{
+    width: 76%;
+
+  }
+
+
   .sub {
     font-size:22px;
     position: relative;
