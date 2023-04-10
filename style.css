@@ -26,9 +26,9 @@ body {
   line-height: 1.5;
   background-color: #fff;
   color:black;
-  width: 80%;
-  justify-content: center;
-  align-items: center;
+  width: 1200;
+  margin: auto;
+
 
 }
 
@@ -37,7 +37,7 @@ header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 80%;
+  width: 1200%;
   height: 60px;
   padding: 0 20px;
   background-color: #0077c0;
@@ -46,6 +46,7 @@ header {
   align-items: center;
   justify-content: space-between;
   z-index: 1;
+  margin: auto;
 }
 
 nav ul {
@@ -80,6 +81,7 @@ nav ul li a:hover {
   color: #333;
   font-size: 14px;
   z-index: 2;
+  margin: auto;
 }
 
 .outlineList {
@@ -121,6 +123,7 @@ footer {
   color: #fff;
   padding: 20px;
   text-align: center;
+  margin: auto;
 }
 
 footer a {
