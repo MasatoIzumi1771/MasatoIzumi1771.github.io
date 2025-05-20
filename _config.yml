@@ -1,0 +1,14 @@
+# サイト基本設定
+title: "My Portfolio"
+description: "ポートフォリオサイト"
+baseurl: ""       # GitHub Pages の場合は空文字
+url: "https://masatoizumi1771.github.io"  # あなたのGitHub Pages URL
+
+author:
+  name: "泉 諒音"
+  email: "103masato0904@gmail.com"
+
+# Markdown 処理など
+markdown: kramdown
+
+default_locale: ja
