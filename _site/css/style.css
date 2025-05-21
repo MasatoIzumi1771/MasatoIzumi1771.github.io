@@ -434,7 +434,7 @@ ul {
 
 /* 研究実績・スキル等のテーブルスタイル */
 .table-container {
-    overflow-x: auto;
+    /* overflow-x: auto; をメディアクエリ内で適用することで、PCでは横スクロールなし、スマホで必要に応じて横スクロール */
     margin-bottom: 50px;
     border-radius: 10px; /* 角を丸く */
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); /* 影をソフトに */
@@ -778,46 +778,123 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
     color: #aebfd4; /* フッター内のテキスト色 */
 }
 
-/* レスポンシブデザイン */
+/* ------------------------------------------------------------- */
+/* レスポンシブデザインの強化 (style.cssのこの部分を更新/追加) */
+/* ------------------------------------------------------------- */
+
+/* タブレット (992px以下) */
 @media (max-width: 992px) {
+    .container {
+        padding: 15px; /* コンテナのパディングを減らす */
+    }
     .nav-list {
-        gap: 12px;
+        gap: 12px; /* メニュー間のスペースを減らす */
     }
     .nav-item a {
         padding: 7px 10px;
         font-size: 0.85em;
     }
+    .site-title {
+        font-size: 1.6em;
+    }
     .section-title {
         font-size: 2.1em;
+        margin-bottom: 45px;
     }
-    .subsection-title {
-        font-size: 1.5em;
+    .lead-text {
+        font-size: 1em;
+        margin-bottom: 50px;
     }
     .profile-area {
         flex-direction: column;
         text-align: center;
         gap: 30px;
+        margin-bottom: 50px;
     }
     .profile-photo {
         margin-bottom: 15px;
+        width: 180px; /* サイズ調整 */
+        height: 180px; /* サイズ調整 */
     }
     .profile-details {
-        min-width: unset;
+        min-width: unset; /* 最小幅を解除 */
+        padding: 0 10px; /* 左右に少しパディング */
+    }
+    .profile-name {
+        font-size: 1.9em;
+    }
+    .profile-affiliation {
+        font-size: 1em;
+    }
+    .profile-intro {
+        font-size: 0.95em;
+    }
+    .subsection-title {
+        font-size: 1.5em;
+        margin-bottom: 35px;
+    }
+    .history-grid {
+        max-width: 600px;
+        margin-bottom: 50px;
     }
     .history-item {
         padding: 14px 20px;
+        font-size: 0.95em;
     }
-    .history-date {
-        width: 90px;
+    .update-history ul {
+        max-width: 550px;
+        padding: 18px 22px;
     }
-    .history-description {
-        margin-left: 15px;
+    .article-list, .article-grid, .skills-list {
+        gap: 20px;
+    }
+    .article-preview {
+        padding: 20px;
+    }
+    .article-preview h4 {
+        font-size: 1.2em;
+    }
+    .article-preview p {
+        font-size: 0.88em;
+    }
+    .table-container {
+        /* テーブルの横スクロールをこのブレークポイントから有効にする */
+        overflow-x: auto;
+    }
+    table {
+        min-width: 600px; /* テーブルがこの幅より小さくならないようにする */
+        width: 100%; /* 親要素の幅いっぱい */
+        display: block; /* 横スクロールのために必要 */
+    }
+    .article-detail {
+        padding: 30px;
+        margin: 30px auto;
+    }
+    .article-title {
+        font-size: 2em;
+    }
+    .article-meta {
+        font-size: 0.85em;
+    }
+    .article-body {
+        font-size: 0.95em;
+    }
+    .article-body h3 {
+        font-size: 1.4em;
+    }
+    .image-gallery {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+    }
+    .image-gallery img {
+        height: 150px;
     }
 }
 
+/* スマートフォン (768px以下) */
 @media (max-width: 768px) {
     .header-inner {
-        flex-wrap: wrap;
+        flex-wrap: wrap; /* ヘッダー要素を折り返す */
         justify-content: center;
         text-align: center;
         padding: 0 15px;
@@ -829,7 +906,7 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
     }
     .nav {
         width: 100%;
-        display: none;
+        display: none; /* デフォルトで非表示 */
         flex-direction: column;
         background-color: #ffffff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -841,7 +918,7 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
         z-index: 999;
     }
     .nav.is-active {
-        display: flex;
+        display: flex; /* JavaScriptで表示 */
     }
     .nav-list {
         flex-direction: column;
@@ -860,231 +937,258 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
         border-bottom: none;
     }
     .menu-toggle {
-        display: block;
+        display: block; /* モバイルで表示 */
         position: absolute;
         right: 15px;
         top: 20px;
     }
     .section {
-        padding: 30px 0;
+        padding: 30px 15px; /* 左右のパディングも調整 */
+        margin-bottom: 30px;
     }
     .section-title {
         font-size: 1.8em;
+        margin-bottom: 30px;
+    }
+    .section-title::after {
+        width: 50px;
+        height: 3px;
+        margin: 10px auto 0;
+    }
+    .lead-text {
+        font-size: 0.95em;
+        margin-bottom: 35px;
+        padding: 0 5px; /* 左右に少しパディング */
+    }
+    .profile-area {
+        gap: 20px;
         margin-bottom: 40px;
+    }
+    .profile-photo {
+        width: 150px; /* さらに小さく */
+        height: 150px;
+    }
+    .profile-name {
+        font-size: 1.7em;
+    }
+    .profile-affiliation {
+        font-size: 0.95em;
+    }
+    .profile-intro {
+        font-size: 0.9em;
+        line-height: 1.7;
+    }
+    .contact-links {
+        justify-content: center;
+        gap: 10px 20px;
+        font-size: 0.9em;
     }
     .subsection-title {
         font-size: 1.3em;
-        margin-bottom: 30px;
+        margin-bottom: 25px;
+    }
+    .subsection-title::after {
+        width: 40px;
+        height: 2px;
+    }
+    .history-grid {
+        margin-bottom: 40px;
     }
     .history-item {
         flex-direction: column;
         align-items: flex-start;
         padding: 12px;
+        font-size: 0.9em;
     }
     .history-date {
         margin-bottom: 3px;
         width: auto;
-        font-size: 0.9em;
+        font-size: 0.85em;
     }
     .history-description {
         margin-left: 0;
         font-size: 0.9em;
     }
-    .article-list, .article-grid, .skills-list, .image-gallery {
-        grid-template-columns: 1fr;
+    .update-history ul {
+        padding: 15px 20px;
+        font-size: 0.9em;
+    }
+    .update-history li {
+        padding: 8px 0;
+    }
+    .update-date {
+        width: 80px;
+        font-size: 0.8em;
+    }
+    .latest-articles {
+        margin-bottom: 40px;
+    }
+    .article-list, .article-grid, .skills-list {
+        grid-template-columns: 1fr; /* 1列表示 */
+        gap: 20px;
+    }
+    .article-preview {
+        padding: 18px;
+    }
+    .article-preview h4 {
+        font-size: 1.1em;
+    }
+    .article-preview .article-date {
+        font-size: 0.75em;
+    }
+    .article-preview p {
+        font-size: 0.85em;
+    }
+    th, td {
+        padding: 10px 15px; /* テーブルセルのパディングを減らす */
+        font-size: 0.85em;
+    }
+    .col-year { width: 15%; } /* モバイルで列幅を調整 */
+    .col-type { width: 25%; }
+    .col-item { width: 60%; }
+    .research-content {
+        font-size: 0.95em;
+    }
+    .research-content h3 {
+        font-size: 1.3em;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+    .skills-list {
+        gap: 20px;
+    }
+    .skill-category {
+        padding: 20px;
+    }
+    .skill-category h4 {
+        font-size: 1.2em;
+    }
+    .skill-category li {
+        padding: 7px 10px;
+        font-size: 0.9em;
     }
     .article-detail {
         padding: 20px;
+        margin: 25px auto;
     }
     .article-title {
         font-size: 1.8em;
     }
+    .article-meta {
+        font-size: 0.8em;
+    }
+    .article-body {
+        font-size: 0.9em;
+        line-height: 1.7;
+    }
     .article-body h3 {
-        font-size: 1.3em;
+        font-size: 1.4em;
+        margin-top: 30px;
+        margin-bottom: 15px;
     }
-    .lead-text {
-        font-size: 1em;
-        margin-bottom: 40px;
+    .image-gallery {
+        grid-template-columns: 1fr; /* 1列表示 */
+        gap: 15px;
     }
-}
-
-/* Deep Research専用のスタイル（既存のTailwind CSSを上書き・調整） */
-/* bodyはstyle.cssで定義されているので、deep_research_rag.htmlでは削除 */
-/* .tab-content, .chart-container, .accordion-content, .nav-link, h2, h3, .card, .tooltip, .diagram-component, .arrowはdeep_research_rag.htmlの<style>ブロックに記載 */
-
-/* Tailwind CSS の一部を上書きして既存デザインと馴染ませる */
-#deep-research-rag .header {
-    background-color: #1a73e8; /* メインヘッダーと同じブルー */
-    color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-#deep-research-rag .header h1 {
-    font-family: 'Montserrat', sans-serif;
-    color: white;
-}
-#deep-research-rag .header p {
-    color: #e0f2f7;
-}
-
-#deep-research-rag .nav {
-    background-color: #0056b3; /* ヘッダーのナビゲーションカラー */
-}
-
-#deep-research-rag .nav-link {
-    color: #e3f2fd; /* ナビリンクの色 */
-    font-weight: 500;
-}
-
-#deep-research-rag .nav-link.active {
-    background-color: #007bff; /* アクティブなナビリンクの色 */
-    color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
-}
-#deep-research-rag .nav-link:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-
-#deep-research-rag h2 {
-    border-bottom: 2px solid #1a73e8; /* section-titleと同じブルー */
-    padding-bottom: 0.75rem;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.2em; /* 調整 */
-    color: #1a73e8;
-    text-align: center; /* 中央寄せ */
-    margin-bottom: 2rem;
-    position: relative;
-}
-#deep-research-rag h2::after { /* section-titleのサブ線を追加 */
-    content: '';
-    display: block;
-    width: 50px;
-    height: 3px;
-    background-color: #FFC107;
-    margin: 10px auto 0;
-    border-radius: 1.5px;
-}
-
-#deep-research-rag h3 {
-    border-left: 4px solid #4285F4; /* サブセクションタイトルと同じブルー */
-    padding-left: 0.75rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.6em; /* 調整 */
-    color: #1a73e8;
-}
-
-#deep-research-rag .card {
-    background-color: #ffffff;
-    border-radius: 10px; /* 角を丸く */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07); /* 影をソフトに */
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid #eef5fb; /* 薄いボーダー */
-}
-
-#deep-research-rag .diagram-component {
-    border: 2px solid #60a5fa; /* Tailwindのブルー */
-    padding: 1rem;
-    border-radius: 0.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s ease;
-    background-color: #e3f2fd; /* 薄いブルー */
-    color: #0056b3;
-}
-#deep-research-rag .diagram-component:hover {
-    background-color: #cce7ff; /* ホバー時の色 */
-    transform: translateY(-2px);
-}
-
-#deep-research-rag .arrow {
-    color: #4285F4; /* 矢印の色を統一 */
-}
-
-#deep-research-rag .accordion-toggle {
-    background-color: #e3f2fd; /* アコーディオンヘッダーの背景色 */
-    color: #0056b3; /* 文字色 */
-    font-weight: 600;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-#deep-research-rag .accordion-toggle:hover {
-    background-color: #cce7ff;
-    transform: translateY(-1px);
-}
-
-#deep-research-rag .accordion-content {
-    background-color: #fafdff; /* アコーディオンコンテンツの背景色 */
-    border: 1px solid #eef5fb;
-    border-top: none; /* 上のボーダーは不要 */
-    color: #444;
-}
-
-#deep-research-rag .chart-container {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    padding: 1rem;
-    border: 1px solid #eef5fb;
-}
-
-#deep-research-rag .list-disc li {
-    font-size: 0.95em;
-    margin-bottom: 0.5em;
-}
-
-#deep-research-rag .list-decimal li {
-    font-size: 0.95em;
-    margin-bottom: 0.5em;
-}
-
-#deep-research-rag .bg-red-50 {
-    background-color: #ffebee; /* より落ち着いた赤 */
-    border-color: #ef9a9a; /* ボーダー色 */
-    color: #c62828; /* 文字色 */
-}
-
-#deep-research-rag .footer {
-    background-color: #2c3e50; /* メインフッターと同じ色 */
-    color: #e0f2f7;
-}
-
-/* RAGページのTailwindフォント設定を上書き */
-#deep-research-rag body {
-    font-family: 'Noto Sans JP', sans-serif; /* Noto Sans JPを優先 */
-}
-#deep-research-rag h1, #deep-research-rag h2, #deep-research-rag h3, #deep-research-rag h4, #deep-research-rag .nav-link {
-    font-family: 'Montserrat', sans-serif; /* 英字見出しはMontserrat */
-}
-
-
-/* スマートフォン向け調整 */
-@media (max-width: 640px) {
-    #deep-research-rag .header h1 {
-        font-size: 1.8rem;
+    .image-gallery img {
+        height: auto; /* 高さを自動調整にすることで、縦長の画像も適切に表示 */
+        max-width: 100%;
     }
-    #deep-research-rag .nav-link {
+    .back-to-list {
+        padding: 8px 18px;
+        font-size: 0.9em;
+    }
+
+    /* Deep Research固有のモバイル調整 */
+    #deep-research-rag .deep-research-nav-header {
+        padding: 1rem 0;
+        border-radius: 0; /* モバイルでは角丸をなくす */
+    }
+    #deep-research-rag .deep-research-nav-header h1 {
+        font-size: 1.5rem;
+    }
+    #deep-research-rag .deep-research-nav-header p {
+        font-size: 0.9rem;
+    }
+    #deep-research-rag .deep-research-nav-tabs {
+        flex-wrap: wrap;
+        padding: 0.5rem 0;
+        border-radius: 0; /* モバイルでは角丸をなくす */
+    }
+    #deep-research-rag .deep-research-nav-tabs .nav-link {
         font-size: 0.8rem;
-        padding: 0.5rem 0.75rem;
-    }
-    #deep-research-rag .flex-col.sm\\:flex-row {
-        flex-direction: column;
-    }
-    #deep-research-rag .sm\\:space-y-0 {
-        margin-top: 1rem;
-    }
-    #deep-research-rag .sm\\:space-x-4 {
-        margin-left: 0;
+        padding: 0.6rem 0.8rem;
+        margin-bottom: 0.25rem; /* ボタン間に隙間 */
     }
     #deep-research-rag .diagram-component {
-        width: 100%;
-        margin-bottom: 0.5rem;
+        font-size: 0.9em;
+        padding: 0.8rem;
     }
-    #deep-research-rag .arrow {
-        display: none; /* スマホでは矢印を非表示にするか、縦に調整 */
+    #deep-research-rag .chart-container {
+        height: 300px; /* モバイルではチャートの高さを低く */
+        max-height: 300px;
+        padding: 0.5rem;
+    }
+}
+
+/* 非常に小さなスマートフォン向け (480px以下) */
+@media (max-width: 480px) {
+    .site-title {
+        font-size: 1.3em;
+    }
+    .section-title {
+        font-size: 1.6em;
+    }
+    .subsection-title {
+        font-size: 1.2em;
+    }
+    .profile-photo {
+        width: 120px;
+        height: 120px;
+    }
+    .profile-name {
+        font-size: 1.5em;
+    }
+    .profile-affiliation, .profile-intro {
+        font-size: 0.85em;
+    }
+    .contact-links li a {
+        font-size: 0.85em;
+    }
+    .history-item, .update-history li {
+        font-size: 0.85em;
+    }
+    .article-preview h4 {
+        font-size: 1em;
+    }
+    .article-preview p {
+        font-size: 0.8em;
+    }
+    th, td {
+        font-size: 0.8em;
+        padding: 8px 10px;
+    }
+    .article-title {
+        font-size: 1.6em;
+    }
+    .article-body {
+        font-size: 0.88em;
+    }
+    .article-body h3 {
+        font-size: 1.2em;
+    }
+    .back-to-list {
+        font-size: 0.85em;
+        padding: 7px 15px;
+    }
+    #deep-research-rag .deep-research-nav-header h1 {
+        font-size: 1.3rem;
+    }
+    #deep-research-rag .deep-research-nav-header p {
+        font-size: 0.8rem;
+    }
+    #deep-research-rag .deep-research-nav-tabs .nav-link {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.6rem;
     }
 }
