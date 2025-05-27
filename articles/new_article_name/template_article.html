@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>記事タイトルをここに書く</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-</head>
+
+    </head>
 <body>
     <header class="header">
         <div class="header-inner">
-            <h1 class="site-title"><a href="../index.html">Masato Izumi Portfolio</a></h1>
+            <h1 class="site-title"><a href="../../index.html">Masato Izumi Portfolio</a></h1>
             <nav class="nav">
                 <ul class="nav-list">
-                    <li class="nav-item"><a href="../index.html">ホーム</a></li>
-                    <li class="nav-item"><a href="../research_achievements.html">研究実績</a></li>
-                    <li class="nav-item"><a href="../research.html">研究</a></li>
-                    <li class="nav-item"><a href="../skills.html">スキル</a></li>
-                    <li class="nav-item"><a href="../articles.html">研究記事</a></li>
-                    <li class="nav-item"><a href="../deep_research/index.html">Deep Research</a></li>
-                    <li class="nav-item"><a href="../other.html">その他</a></li>
+                    <li class="nav-item"><a href="../../index.html">ホーム</a></li>
+                    <li class="nav-item"><a href="../../research_achievements.html">研究実績</a></li>
+                    <li class="nav-item"><a href="../../research.html">研究</a></li>
+                    <li class="nav-item"><a href="../../skills.html">スキル</a></li>
+                    <li class="nav-item"><a href="../../articles.html">研究記事</a></li>
+                    <li class="nav-item"><a href="../../commands.html">コマンド</a></li> <li class="nav-item"><a href="../../other.html">その他</a></li>
                 </ul>
             </nav>
             <button class="menu-toggle" aria-label="メニューを開く">
@@ -34,12 +34,11 @@
         <section class="article-detail section">
             <div class="container">
                 <h2 class="article-title">記事のメインタイトルをここに書く</h2>
-                <p class="article-meta">公開日: 2025.05.21</p>
+                <p class="article-meta">公開日: 2025.MM.DD</p>
                 
                 <div class="article-body">
                     <p>
-                        ここに記事の最初の段落を書きます。読者を引きつけるような内容で始めましょう。
-                        サイト全体のデザインと統一感を保つため、文字の色やサイズはCSSで管理されています。
+                        ここに記事の最初の段落を書きます。サイト全体のデザインと統一感を保つため、文字の色やサイズはCSSで管理されています。
                         必要に応じて、**太字**や<a href="https://example.com" target="_blank" rel="noopener noreferrer">リンク</a>を挿入できます。
                     </p>
 
@@ -59,17 +58,26 @@
 
                     <p>
                         記事に関連する画像を挿入することも可能です。
-                        画像ファイルは`images/`ディレクトリに保存し、パスを正しく指定してください。
+                        画像ファイルは、この`index.html`と同じフォルダに保存してください。
                     </p>
-                    <img src="../images/sample-image.jpg" alt="画像の説明をここに書く">
-                    <p style="text-align: center; font-size: 0.85em; color: #777;">図1: 画像のキャプション</p>
+                    <img src="sample-image.jpg" alt="画像の説明をここに書く">
+                    <p style="text-align: center; font-size: 0.85em; color: #777; margin-top: 5px;">図1: 画像のキャプション</p>
 
                     <h3>関連画像ギャラリー</h3>
                     <div class="image-gallery">
-                        <img src="../images/sample-image1.jpg" alt="画像1の説明">
-                        <img src="../images/sample-image2.jpg" alt="画像2の説明">
-                        <img src="../images/sample-image3.jpg" alt="画像3の説明">
+                        <img src="sample-image1.jpg" alt="画像1の説明">
+                        <img src="sample-image2.jpg" alt="画像2の説明">
+                        <img src="sample-image3.jpg" alt="画像3の説明">
                         </div>
+
+                    <h3>コードの例</h3>
+                    <pre><code>
+def hello_world():
+    print("Hello, World!")
+
+hello_world()
+                    </code></pre>
+                    <p>上記のPythonコードは"Hello, World!"を出力するシンプルな例です。</p>
 
                     <p>
                         記事の締めくくりです。まとめや今後の展望などを記述しましょう。
@@ -77,7 +85,7 @@
                     </p>
                 </div>
                 <div class="article-navigation">
-                    <a href="../articles.html" class="back-to-list">&lt; 記事一覧へ戻る</a>
+                    <a href="../../articles.html" class="back-to-list">&lt; 記事一覧へ戻る</a>
                 </div>
             </div>
         </section>
@@ -89,6 +97,6 @@
         </div>
     </footer>
 
-    <script src="../js/main.js"></script>
-</body>
+    <script src="../../js/main.js"></script>
+    </body>
 </html>

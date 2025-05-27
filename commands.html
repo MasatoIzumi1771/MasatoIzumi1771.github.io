@@ -20,7 +20,7 @@
                     <li class="nav-item"><a href="research.html">研究</a></li>
                     <li class="nav-item"><a href="skills.html">スキル</a></li>
                     <li class="nav-item"><a href="articles.html">研究記事</a></li>
-                    <li class="nav-item"><a href="commands.html">コマンド</a></li> 
+                    <li class="nav-item"><a href="commands.html">コマンド</a></li>
                     <li class="nav-item"><a href="other.html">その他</a></li>
                 </ul>
             </nav>
@@ -111,6 +111,58 @@ pip freeze > requirements.txt
                     </div>
                 </div>
 
+                <div class="command-category-section">
+                    <h3 class="subsection-title">Poetry 環境管理</h3>
+                    <div class="command-list">
+                        <div class="command-item card">
+                            <h4>新しいプロジェクトの作成</h4>
+                            <pre><code>poetry new my-project-name
+cd my-project-name
+</code></pre>
+                            <p class="command-description">Poetryで新しいPythonプロジェクトを初期化します。`pyproject.toml`と基本構造が作成されます。</p>
+                        </div>
+                        <div class="command-item card">
+                            <h4>依存関係の追加</h4>
+                            <pre><code>poetry add requests
+poetry add "numpy@^1.20"  # 特定のバージョン範囲を指定
+poetry add --group dev black # 開発用依存関係
+</code></pre>
+                            <p class="command-description">パッケージをプロジェクトに追加し、`pyproject.toml`と`poetry.lock`を更新します。</p>
+                        </div>
+                        <div class="command-item card">
+                            <h4>依存関係のインストール</h4>
+                            <pre><code>poetry install
+</code></pre>
+                            <p class="command-description">`pyproject.toml`に基づき依存関係をインストールします。`poetry.lock`があればそれを使用します。</p>
+                        </div>
+                        <div class="command-item card">
+                            <h4>仮想環境のシェルに入る</h4>
+                            <pre><code>poetry shell
+</code></pre>
+                            <p class="command-description">Poetryが管理するプロジェクトの仮想環境をアクティベートします。</p>
+                        </div>
+                        <div class="command-item card">
+                            <h4>コマンドを実行する</h4>
+                            <pre><code>poetry run python main.py
+poetry run pytest
+</code></pre>
+                            <p class="command-description">仮想環境をアクティベートせずに、その中でコマンドを実行します。</p>
+                        </div>
+                        <div class="command-item card">
+                            <h4>依存関係の更新</h4>
+                            <pre><code>poetry update
+poetry update requests  # 特定のパッケージのみ更新
+</code></pre>
+                            <p class="command-description">依存関係を最新バージョンに更新し、`poetry.lock`を更新します。</p>
+                        </div>
+                        <div class="command-item card">
+                            <h4>依存関係のエクスポート</h4>
+                            <pre><code>poetry export -f requirements.txt --output requirements.txt --without-hashes
+</code></pre>
+                            <p class="command-description">`requirements.txt`形式で依存関係をエクスポートし、他のツール（Dockerなど）で利用できるようにします。</p>
+                        </div>
+                    </div>
+                </div>
                 </div>
         </section>
     </main>
