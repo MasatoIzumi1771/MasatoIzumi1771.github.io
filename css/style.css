@@ -3,7 +3,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
 
 body {
     font-family: 'Noto Sans JP', sans-serif;
@@ -1193,3 +1192,88 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
     }
 }
 
+
+/* コマンドセクションの追加スタイル */
+.command-category-section {
+    margin-bottom: 60px; /* カテゴリ間のスペース */
+}
+
+.command-category-section .subsection-title {
+    margin-bottom: 30px; /* サブタイトルとコマンドリストのスペース */
+    text-align: left; /* 左寄せ */
+    padding-left: 0; /* paddingをリセットして、subsection-title::after を個別に制御 */
+}
+
+.command-category-section .subsection-title::after {
+    display: none; /* 下線を非表示に (セクションタイトルと区別するため) */
+}
+
+/* もし、コマンドカテゴリのタイトルにも下線が欲しい場合は、上記の `display: none;` を削除し、
+   以下のように左寄せの下線に変更することも可能です。
+.command-category-section .subsection-title::after {
+    display: block;
+    width: 40px;
+    margin: 10px 0 0 0; /* 左寄せにする */
+}
+*/
+
+.command-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* カード形式で並べる */
+    gap: 25px; /* カード間のスペース */
+}
+
+.command-item {
+    padding: 20px;
+    background-color: #fafdff; /* 背景色 */
+    border: 1px solid #eef5fb; /* 薄いボーダー */
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.command-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.command-item h4 {
+    font-size: 1.15em;
+    color: #1a73e8;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.command-item pre {
+    background-color: #f0f4f7; /* コードブロックの背景色 */
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto; /* 横スクロールが必要な場合に表示 */
+    margin-bottom: 15px;
+    border: 1px solid #dde7f0;
+}
+
+.command-item code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* 等幅フォント */
+    color: #333;
+    font-size: 0.9em;
+    line-height: 1.4;
+    display: block; /* pre内で改行を保持 */
+}
+
+.command-item .command-description {
+    font-size: 0.9em;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* レスポンシブ対応の調整 (既存のmedia queryに追加) */
+@media (max-width: 768px) {
+    .command-list {
+        grid-template-columns: 1fr; /* スマホでは1列表示 */
+        gap: 20px;
+    }
+    .command-category-section .subsection-title {
+        text-align: center; /* 中央寄せ */
+    }
+}
