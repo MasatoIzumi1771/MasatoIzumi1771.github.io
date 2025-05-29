@@ -76,12 +76,18 @@
                     <p>
                         以下のコマンドを実行して、**ssh-agent** を起動・設定します。
                     </p>
+                    <pre><code class="language-bash"># 1. ssh-agent を起動"</code></pre>
                     <pre><code class="language-bash">eval "$(ssh-agent -s)"</code></pre>
                     <p>
                         これは SSH 認証エージェントのデーモンを起動し、バックグラウンドで秘密鍵を保持してくれます。このコマンドにより **SSH_AUTH_SOCK** という変数に、ソケットファイルのパスが自動的にセットされます。
                     </p>
                     <p>例:</p>
-                    <pre><code class="language-bash">echo $SSH_AUTH_SOCK # /tmp/ssh-xyz123/agent.1234</code></pre>
+                    <pre><code class="language-bash"># 2. SSH_AUTH_SOCK を設定</code></pre>
+                    <pre><code class="language-bash">export SSH_AUTH_SOCK=$(find /tmp/ssh-* -type s)</code></pre>
+                    <pre><code class="language-bash"># 3. 環境変数が正しく設定されたか確認</code></pre>
+                    <pre><code class="language-bash">echo $SSH_AUTH_SOCK  # => /tmp/ssh-abc123/agent.5835</code></pre>
+                    <p>
+                        その後、Docker Compose を再実行します。
                     <p>
                         これにより、**docker-compose.yml** の以下の指定が、次のように展開されます。
                     </p>
