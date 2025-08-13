@@ -53,12 +53,21 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentPathname.includes('/other/') && (linkPathname.endsWith('/other.html') || linkPathname.endsWith('/other/'))) {
              link.classList.add('active-link');
         }
-
     });
-
-
-
-
-
 });
 
+// --- KaTeXの数式をレンダリングする命令を追加 ---
+document.addEventListener('DOMContentLoaded', () => {
+    // KaTeXの自動レンダリング機能が存在するか確認してから実行
+    if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+            // KaTeXが認識する数式の区切り文字を設定
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ]
+        });
+    }
+});

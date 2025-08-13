@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技術メモ：Transformerの位置符号（Positional Encoding）について</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="site-title"><a href="../../index.html">Masato Izumi Portfolio</a></h1>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="../../index.html">ホーム</a></li>
+                    <li class="nav-item"><a href="../../research_achievements.html">研究実績</a></li>
+                    <li class="nav-item"><a href="../../research.html">研究</a></li>
+                    <li class="nav-item"><a href="../../skills.html">スキル</a></li>
+                    <li class="nav-item"><a href="../../articles.html">研究記事</a></li>
+                    <li class="nav-item"><a href="../../commands.html">コマンド</a></li> <li class="nav-item"><a href="../../other.html">その他</a></li>
+                </ul>
+            </nav>
+            <button class="menu-toggle" aria-label="メニューを開く">
+                <span class="menu-icon"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="article-detail section">
+            <div class="container">
+                <h2 class="article-title">技術メモ：Transformerの位置符号（Positional Encoding）について</h2>
+                <p class="article-meta">公開日: 2025.08.13</p>
+                
+                <div class="article-body">
+                    <h3>はじめに：本記事について</h3>
+                    <p>
+                        Transformerモデルの内部で使用される位置符号（Positional Encoding）について、私が理解した内容をまとめます。特に、位置符号の計算方法やその背後にあるアイデアを深く掘り下げて解説します。
+                        それぞれインプットに対して、位置符号をどのように計算するかを具体的に見ていきます。
+                    </p>
+                                        
+                    
+                    <p>
+                        以下transformerの構造を示す図です。
+
+                    <img src="transformer.png" alt="transformerの構造">
+
+                    </p>
+
+                    <p>
+                        input encoding, output encodingの後の処理であるpositional encodingの部分の処理についてです。
+                    </p>
+
+                    <h3>なぜ位置符号が必要なのか？</h3>
+                    <p>
+                        Transformerモデルの心臓部であるSelf-Attentionは、文中の単語同士の関連度を計算する非常に強力な仕組みです。しかし、その計算過程で単語の元の順序が失われてしまうという大きな弱点があります。例えば、「犬が猫を追いかけた」と「猫が犬を追いかけた」では意味が全く異なりますが、Self-Attentionにとっては、単に「犬、猫、追いかけた、が、を」という単語の集合に見えてしまい、区別がつきません。
+                    </p>
+
+                    <p>
+                        この問題を解決するのが<strong>位置符号（Positional Encoding）</strong>です。その目的は、入力される各単語のベクトルに対し、文章中におけるその単語の「住所」や「位置」に関する情報を、数学的に埋め込むことです。これにより、Transformerは単語の意味だけでなく、その順序も理解できるようになります。
+                    </p>
+
+                    <h3>第1章：位置符号の計算方法</h3>
+                    <h4>1.1 計算式</h4>
+                    <p>
+                        位置符号は、文章中の単語の位置を $pos$ （0から始まる番号）、モデルが扱うベクトルの次元数を $d_{model}$ としたとき、ベクトルの各次元 $i$ に対して以下の式で計算されます。
+                    </p>
+                    <p>偶数次元 ($2i$) の場合:</p>
+                    <p style="text-align: center; font-size: 1.1em; margin: 1em 0;">
+                        $PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)$
+                    </p>
+                    <p>奇数次元 ($2i+1$) の場合:</p>
+                    <p style="text-align: center; font-size: 1.1em; margin: 1em 0;">
+                        $PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)$
+                    </p>
+                    <p>
+                        この計算によって、各位置 $pos$ ごとに、$d_{model}$ 次元のユニークなベクトル（位置符号ベクトル）が生成されます。最終的に、この位置符号ベクトルが、元の単語の意味を表すベクトル（単語埋め込み）に足し算されます。
+                    </p>
+                    
+                    <h4>1.2 具体例で学ぶ計算ステップ ($d_{model}=4$の場合)</h4>
+                    <p>
+                        文章「私は 猫が 好き」で、2番目の単語「猫」($pos=1$)の位置符号を計算してみましょう。
+                    </p>
+                    <ul>
+                        <li>ベクトルの次元数 ($d_{model}$): 4次元</li>
+                        <li>次元インデックス ($i$): $d_{model}/2 = 2$ なので、 $i=0$ と $i=1$ の2つのペアを考えます。</li>
+                    </ul>
+
+                    <p><strong>① i=0のペア（0次元目, 1次元目）の計算</strong></p>
+                    <ul>
+                        <li>分母: $10000^{2 \times 0 / 4} = 10000^0 = 1$</li>
+                        <li>0次元目(偶数): $PE_{(1, 0)} = \sin(1/1) = \sin(1) \approx 0.841$</li>
+                        <li>1次元目(奇数): $PE_{(1, 1)} = \cos(1/1) = \cos(1) \approx 0.540$</li>
+                    </ul>
+                    
+                    <p><strong>② i=1のペア（2次元目, 3次元目）の計算</strong></p>
+                    <ul>
+                        <li>分母: $10000^{2 \times 1 / 4} = 10000^{1/2} = 100$</li>
+                        <li>2次元目(偶数): $PE_{(1, 2)} = \sin(1/100) \approx 0.010$</li>
+                        <li>3次元目(奇数): $PE_{(1, 3)} = \cos(1/100) \approx 0.999$</li>
+                    </ul>
+                    
+                    <p><strong>③ 結果の結合</strong></p>
+                    <p>
+                        「猫」($pos=1$)の位置符号ベクトルは、<code>[0.841, 0.540, 0.010, 0.999]</code>となります。同様に、他の位置の単語も全く異なるベクトルが生成され、位置を区別できます。
+                    </p>
+
+                    <h3>第2章：なぜこの仕組みなのか？ 核心概念の深掘り</h3>
+                    <p>
+                        ここからは、対話の中で生まれた疑問とその答えを通して、この数式の裏にある巧みなアイデアを解説します。
+                    </p>
+
+                    <h4>2.1 なぜ次元ごとに波を変えるのか？ - インデックスiの役割</h4>
+                    <p><strong>【疑問】</strong> 各次元のインデックス $i$ は何を意味しているのか？</p>
+                    <p>
+                        $i$ は、位置符号ベクトルを構成する<strong>波のパターン（周波数）を変えるための「スイッチ」</strong>の役割を担っています。
+                        計算式の分母 $10000^{2i/d_{model}}$ に注目すると、$i$ が小さいほど分母は小さく（1に近く）、$i$ が大きいほど分母は大きくなります。これは、sin/cosの中身に影響を与え、結果として波の揺れ方を変えます。
+                    </p>
+                    <ul>
+                        <li><strong>$i$ が小さい次元（ベクトルの前半）:</strong><br>
+                            波の揺れがゆっくりになります（低周波）。これは、文章全体における大局的な位置関係を捉えるのに役立ちます。4次元の例では、0次元目と1次元目がこれにあたります。
+                        </li>
+                        <li><strong>$i$ が大きい次元（ベクトルの後半）:</strong><br>
+                            波の揺れが速くなります（高周波）。これは、隣り合う単語同士の細かい、局所的な位置関係を捉えるのに役立ちます。4次元の例では、2次元目と3次元目がこれにあたります。
+                        </li>
+                    </ul>
+                    <p>
+                        これは、様々な楽器が重なって一つの楽曲を作るオーケストラに似ています。低音担当の楽器（$i$ が小さい）と高音担当の楽器（$i$ が大きい）がそれぞれのメロディーを奏でることで、豊かで複雑なハーモニー（位置情報）が生まれるのです。
+                    </p>
+
+                    <h4>2.2 なぜsinとcosをペアにするのか？ - 「回転」という最強のアイデア</h4>
+                    <p><strong>【疑問】</strong> ペアにすることと「回転」の関係性がわからない。なぜペアにすると回転できるのか？</p>
+                    <p>この疑問の答えこそ、位置符号の最もエレガントな部分です。</p>
+                    <ul>
+                        <li><strong>ペアで「円」を作る:</strong><br>
+                            もし1次元、例えば $\sin(pos)$ だけで位置を表そうとすると、その値は数直線上を行ったり来たりするだけで、向きが一定しません。しかし、$\cos(pos)$ と $\sin(pos)$ をペアで使うと、これは2次元平面上の円周上の点の座標 (x, y) を表現することになります。$pos$ が増えることは、この円周上を点がクルクルと回転することを意味します。
+                        </li>
+                        <li><strong>回転で「相対位置」を測る:</strong><br>
+                            この「回転」という性質のおかげで、ある位置 $pos$ から「k個隣」の位置 $pos+k$ への移動は、どの $pos$ から出発しても、常に同じ角度だけの回転操作として表現できます。この回転操作は、数学的には回転行列 $R_k$ という「物差し」で表せます。
+                        </li>
+                    </ul>
+                    <p><strong>【理解の核心】</strong><br>
+                        モデルが学習するのは、「位置2から位置3への行き方」や「位置8から位置9への行き方」といった無数の個別ケースではありません。モデルは、「"1つ隣"という関係性は、この $R_1$ という物差し（回転操作）を使えば測れる」という、たった一つの普遍的なルールを学習すれば良いのです。
+                    </p>
+                    <p>
+                        これにより、モデルは文の長さや絶対位置に依存しない、非常に効率的で強力な「相対位置を認識する能力」を獲得します。
+                    </p>
+                    
+                    <h4>2.3 複数ペアはどう動くのか？ - 独立した世界での並列処理</h4>
+                    <p><strong>【疑問】</strong> 4次元ベクトルの場合、2ペア分の回転ベクトルを「加える」ことで表現するのか？</p>
+                    <p>
+                        これは非常に鋭い疑問です。答えは「加える」のではなく、<strong>「各ペアが独立して回転し、その結果を並べて結合（Concatenate）する」</strong>です。
+                        4次元ベクトルは、2つの独立した「2次元の世界」だと考えます。
+                    </p>
+                    <ul>
+                        <li><strong>世界A ($i=0$ のペア):</strong> 大局的な位置を測る、周期の長い世界。</li>
+                        <li><strong>世界B ($i=1$ のペア):</strong> 局所的な位置を測る、周期の短い世界。</li>
+                    </ul>
+                    <p>
+                        「k個隣」への移動を計算するとき、
+                    </p>
+                    <ul>
+                        <li>世界Aの中で、専用の物差し $R_k(i=0)$ を使って回転が起こる。</li>
+                        <li>それと並行して、全く独立に、世界Bの中でも専用の物差し $R_k(i=1)$ を使って回転が起こる。</li>
+                    </ul>
+                    <p>
+                        最終的な4次元ベクトルは、世界Aの回転後の座標と、世界Bの回転後の座標を、単純に横に並べて作られます。
+                        この「並列・独立処理」により、大局的な位置情報と局所的な位置情報の両方を失うことなく、4次元のベクトルとして保つことができるのです。
+                    </p>
+
+                    <h3>第3章：他の概念との関連と補足</h3>
+                    <h4>3.1 フーリエ変換との関係 - 「思想の継承」</h4>
+                    <p><strong>【疑問】</strong> この仕組みはフーリエ変換に似ているか？</p>
+                    <p>
+                        はい、これは非常に的確な洞察です。位置符号はフーリエ変換そのものではありませんが、その根底にある<strong>「どんな複雑な情報も、単純な波（sin/cos）の組み合わせで表現できる」という思想を色濃く受け継いでいます。</strong>
+                    </p>
+                    <p>
+                        フーリエ変換が既存の信号を分析して周波数成分に分解するのに対し、位置符号は位置という情報を表現するために、様々な周波数の波を組み合わせてベクトルを人工的に生成する、という違いはありますが、その発想は共通しています。
+                    </p>
+
+                    <h4>3.2 「10000」という数字の謎</h4>
+                    <p><strong>【疑問】</strong> 式に出てくる「10000」はどこから来たのか？マジックナンバーか？</p>
+                    <p>
+                        はい、これは一種のマジックナンバーであり、Transformerの原論文の著者らが経験的に設定したハイパーパラメータです。この数字は、位置符号が表現できる波の周期（波長）の範囲を決定します。この値が大きすぎず小さすぎず、様々な長さの文章に対応できるバランスの良い値として選ばれ、現在では事実上の標準となっています。
+                    </p>
+
+                    <h3>おわりに</h3>
+                    <p>
+                        個人的な解釈のまとめが以下です。
+                    </p>
+                    <blockquote>
+                        <p>「1番目のトークンと2番目のトークンのi=0のペアは同じ世界にいて、その中の物差しで自由にどのトークンも表せられる」</p>
+                    </blockquote>
+                    <p>
+                        この一文は、位置符号の仕組みの神髄を完璧に捉えています。
+                    </p>
+                    <ul>
+                        <li><strong>共通の世界:</strong> 全ての単語は、次元ペア $i$ ごとに作られる「同じ座標平面」上にプロットされる。</li>
+                        <li><strong>共通の物差し:</strong> その世界の中では、相対距離を測るための「共通の回転行列（物差し）」が使い回される。</li>
+                        <li><strong>自由な表現:</strong> これにより、どの単語を基準にしても、他の全ての単語との相対的な位置関係を、普遍的なルールで自由に表現できる。</li>
+                    </ul>
+                    <p>
+                        このエレガントな仕組みこそが、Transformerが複雑な文章構造を理解し、驚異的な性能を発揮するための根幹の一つとなっているのです。
+                    </p>
+
+                    <h3>参考文献</h3>
+                    <ul>
+                        <li>Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... & Polosukhin, I. (2017). Attention is all you need. In *Advances in neural information processing systems* (pp. 5998-6008).</li>
+                    </ul>
+                </div>
+                <div class="article-navigation">
+                    <a href="../../articles.html" class="back-to-list">&lt; 記事一覧へ戻る</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Masato Izumi Portfolio</p>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    </body>
+</html>
