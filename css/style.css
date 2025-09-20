@@ -1277,3 +1277,47 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
         text-align: center; /* 中央寄せ */
     }
 }
+
+/* スキルページの資格テーブル専用スタイル */
+.qualification-table-container {
+    margin-bottom: 50px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.qualification-table-container table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    max-width: 1000px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* ヘッダーのフォントサイズを小さくし、パディングを調整して横幅を圧縮 */
+.qualification-table-container th {
+    font-size: 0.8em;
+    padding: 10px 15px;
+    white-space: nowrap; /* テキストの折り返しを防ぐ */
+}
+
+/* セルのフォントサイズを小さくし、パディングを調整して横幅を圧縮 */
+.qualification-table-container td {
+    font-size: 0.8em;
+    padding: 10px 15px;
+}
+
+/* 取得年月日と資格名の列幅を調整 */
+.qualification-table-container .col-date {
+    width: 35%; /* 日付の列幅を確保 */
+}
+.qualification-table-container .col-qualification {
+    width: 65%; /* 資格名の列幅を確保 */
+}
+
+/* スキルページの表でのみ、スマホで横スクロールを無効化 */
+@media (max-width: 767px) {
+    .qualification-table-container {
+        overflow-x: hidden;
+    }
+}
