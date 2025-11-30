@@ -3,12 +3,29 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+:root {
+    --color-primary: #1a73e8;
+    --color-primary-strong: #0056b3;
+    --color-accent: #ffc107;
+    --color-surface: #ffffff;
+    --color-surface-alt: #fafdff;
+    --color-bg: #f7faff;
+    --color-border: #e0f2f7;
+    --color-border-strong: #dde7f0;
+    --color-text: #333;
+    --color-text-muted: #555;
+    --shadow-light: 0 1px 6px rgba(0, 0, 0, 0.08);
+    --shadow-soft: 0 4px 18px rgba(0, 0, 0, 0.06);
+    --radius-card: 12px;
+}
 
 body {
     font-family: 'Noto Sans JP', sans-serif;
     line-height: 1.6; /* 行間を少し詰める */
-    color: #333;
-    background-color: #f7faff; /* より落ち着いた薄いブルー */
+    color: var(--color-text);
+    background-color: var(--color-bg); /* より落ち着いた薄いブルー */
     overflow-x: hidden; /* 横スクロールバーが出ないように */
 }
 
@@ -20,15 +37,20 @@ body {
 }
 
 a {
-    color: #007bff; /* 青 */
+    color: var(--color-primary); /* 青 */
     text-decoration: none;
     transition: color 0.3s ease, transform 0.2s ease; /* ホバーアニメーションを追加 */
 }
 
 a:hover {
-    color: #0056b3; /* 濃い青 */
+    color: var(--color-primary-strong); /* 濃い青 */
     text-decoration: underline;
     transform: translateY(-1px);
+}
+
+a:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 ul {
@@ -37,13 +59,13 @@ ul {
 
 /* ヘッダー */
 .header {
-    background-color: #ffffff; /* ホワイト */
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08); /* 影を控えめに */
+    background-color: var(--color-surface); /* ホワイト */
+    box-shadow: var(--shadow-light); /* 影を控えめに */
     padding: 15px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid #e0f2f7; /* 細いボーダーを追加 */
+    border-bottom: 1px solid var(--color-border); /* 細いボーダーを追加 */
 }
 
 .header-inner {
@@ -63,7 +85,7 @@ ul {
 }
 
 .site-title a {
-    color: #1a73e8; /* より洗練されたブルー */
+    color: var(--color-primary); /* より洗練されたブルー */
     text-decoration: none;
 }
 
@@ -75,7 +97,7 @@ ul {
 .nav-item a {
     display: block;
     padding: 8px 12px; /* パディングを調整 */
-    color: #555; /* 色を少し濃く */
+    color: var(--color-text-muted); /* 色を少し濃く */
     font-weight: 500;
     position: relative;
     overflow: hidden;
@@ -90,17 +112,27 @@ ul {
     left: 0;
     width: 100%;
     height: 2px; /* 下線を細く */
-    background-color: #1a73e8; /* 洗練されたブルー */
+    background-color: var(--color-primary); /* 洗練されたブルー */
     transform: translateX(-100%);
     transition: transform 0.3s ease;
 }
 
 .nav-item a:hover {
-    color: #1a73e8;
+    color: var(--color-primary);
     background-color: #e3f2fd; /* ホバー時の背景色 */
 }
 
 .nav-item a:hover::before {
+    transform: translateX(0);
+}
+
+.nav-item a.active-link {
+    color: var(--color-primary);
+    background-color: #e3f2fd;
+    font-weight: 700;
+}
+
+.nav-item a.active-link::before {
     transform: translateX(0);
 }
 
@@ -115,6 +147,11 @@ ul {
     cursor: pointer;
     z-index: 1100;
     padding: 0;
+}
+
+.menu-toggle:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
 }
 
 .menu-icon,
@@ -1208,6 +1245,13 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
     display: none; /* 下線を非表示に (セクションタイトルと区別するため) */
 }
 
+.card {
+    background-color: var(--color-surface-alt);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
 /* もし、コマンドカテゴリのタイトルにも下線が欲しい場合は、上記の `display: none;` を削除し、
    以下のように左寄せの下線に変更することも可能です。
 .command-category-section .subsection-title::after {
@@ -1225,8 +1269,8 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
 
 .command-item {
     padding: 20px;
-    background-color: #fafdff; /* 背景色 */
-    border: 1px solid #eef5fb; /* 薄いボーダー */
+    background-color: var(--color-surface-alt); /* 背景色 */
+    border: 1px solid var(--color-border-strong); /* 薄いボーダー */
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -1239,7 +1283,7 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
 
 .command-item h4 {
     font-size: 1.15em;
-    color: #1a73e8;
+    color: var(--color-primary);
     margin-bottom: 15px;
     font-weight: 600;
 }
@@ -1250,20 +1294,21 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
     border-radius: 8px;
     overflow-x: auto; /* 横スクロールが必要な場合に表示 */
     margin-bottom: 15px;
-    border: 1px solid #dde7f0;
+    border: 1px solid var(--color-border-strong);
 }
 
 .command-item code {
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* 等幅フォント */
-    color: #333;
+    color: var(--color-text);
     font-size: 0.9em;
     line-height: 1.4;
     display: block; /* pre内で改行を保持 */
+    word-break: break-word;
 }
 
 .command-item .command-description {
     font-size: 0.9em;
-    color: #555;
+    color: var(--color-text-muted);
     line-height: 1.5;
 }
 

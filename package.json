@@ -1,0 +1,21 @@
+{
+  "name": "masato-izumi-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx @11ty/eleventy --serve",
+    "build": "npx @11ty/eleventy",
+    "format": "npx prettier --write \"src/**/*.{html,njk,md}\" \"src/css/**/*.css\" \"src/js/**/*.js\"",
+    "lint:html": "npx html-validate src",
+    "lint:css": "npx stylelint \"src/css/**/*.css\"",
+    "lint": "npm-run-all lint:html lint:css"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "html-validate": "^8.6.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.3.3",
+    "stylelint": "^16.9.0",
+    "stylelint-config-standard": "^36.0.0"
+  }
+}
