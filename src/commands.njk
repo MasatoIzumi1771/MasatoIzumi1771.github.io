@@ -1,0 +1,30 @@
+---
+layout: base.njk
+title: コマンド
+bodyClass: commands-page
+permalink: /commands.html
+---
+<section id="commands" class="section">
+    <div class="container">
+        <h2 class="section-title">よく使うコマンド集</h2>
+        <p class="lead-text">
+            このセクションでは、開発や研究で頻繁に利用するコマンドやその使い方をまとめています。<br>
+            特に便利なものを厳選して紹介しており、必要に応じて随時更新していきます。
+        </p>
+
+        {% for category in commands %}
+        <div class="command-category-section">
+            <h3 class="subsection-title">{{ category.title }}</h3>
+            <div class="command-list">
+                {% for item in category.items %}
+                <div class="command-item card">
+                    <h4>{{ item.name }}</h4>
+                    <pre><code>{{ item.code | escape }}</code></pre>
+                    <p class="command-description">{{ item.description | safe }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>

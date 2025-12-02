@@ -1,0 +1,21 @@
+---
+layout: base.njk
+title: 研究記事
+bodyClass: articles-page
+permalink: /articles.html
+---
+<section id="research-articles" class="section">
+    <div class="container">
+        <h2 class="section-title">研究記事</h2>
+        <div class="article-grid">
+            {% for article in articlesList %}
+            <div class="article-card">
+                <h3 class="article-card-title"><a href="{{ article.href }}">{{ article.title }}</a></h3>
+                <p class="article-card-date">{{ article.date }}</p>
+                <p class="article-card-description">{{ article.description }}</p>
+                <a href="{{ article.href }}" class="read-more">続きを読む &gt;</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
