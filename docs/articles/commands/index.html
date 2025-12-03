@@ -11,12 +11,12 @@
         
     
 
-    <title>リニューアルのポイント - Masato Izumi Portfolio</title>
-    <meta name="description" content="ポートフォリオサイトをリニューアルしたポイントのまとめ。">
-    <link rel="canonical" href="https://masatoizumi1771.github.io/articles/renewal/renewal.html">
-    <meta property="og:title" content="リニューアルのポイント - Masato Izumi Portfolio">
-    <meta property="og:description" content="ポートフォリオサイトをリニューアルしたポイントのまとめ。">
-    <meta property="og:url" content="https://masatoizumi1771.github.io/articles/renewal/renewal.html">
+    <title>よく使うコマンド集 - Masato Izumi Portfolio</title>
+    <meta name="description" content="DockerやGitでよく使うコマンドを自分用メモとしてまとめました。">
+    <link rel="canonical" href="https://masatoizumi1771.github.io/articles/commands/">
+    <meta property="og:title" content="よく使うコマンド集 - Masato Izumi Portfolio">
+    <meta property="og:description" content="DockerやGitでよく使うコマンドを自分用メモとしてまとめました。">
+    <meta property="og:url" content="https://masatoizumi1771.github.io/articles/commands/">
     
         <meta property="og:type" content="article">
     
@@ -24,8 +24,8 @@
         <meta property="og:image" content="https://masatoizumi1771.github.io/images/profile.png">
     
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="リニューアルのポイント - Masato Izumi Portfolio">
-    <meta name="twitter:description" content="ポートフォリオサイトをリニューアルしたポイントのまとめ。">
+    <meta name="twitter:title" content="よく使うコマンド集 - Masato Izumi Portfolio">
+    <meta name="twitter:description" content="DockerやGitでよく使うコマンドを自分用メモとしてまとめました。">
     
         <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
     
@@ -109,35 +109,59 @@
             <span aria-hidden="true">/</span>
             <a href="/articles.html">研究記事</a>
             <span aria-hidden="true">/</span>
-            <span class="breadcrumb-current">リニューアルのポイント</span>
+            <span class="breadcrumb-current">よく使うコマンド集</span>
         </nav>
-        <h2 class="article-title">リニューアルのポイント</h2>
-        <p class="article-meta">公開日: 2025.05.21</p>
+        <h2 class="article-title">よく使うコマンド集</h2>
+        <p class="article-meta">公開日: 2025.09.30</p>
         
             
             
                 <ul class="tag-list" aria-label="タグ">
                     
-                        <li class="tag-pill">お知らせ</li>
+                        <li class="tag-pill">コマンド</li>
+                    
+                        <li class="tag-pill">開発</li>
                     
                 </ul>
             
         
         <div class="article-body">
-            <p>
-                        この度、私のポートフォリオサイトのデザインと構成を全面的にリニューアルいたしました！<br>
-                        
-                    </p>
-                    <h3>リニューアルのポイント</h3>
-                    <ul>
-                        <li>**情報整理の改善**: 「ホーム」「研究実績」「研究」「スキル」「研究記事」「Deep Research」「その他」とカテゴリを明確に分け、ヘッダーから簡単に各ページへアクセスできるようになりました。</li>
-                        <li>**記事機能の充実**: 「研究記事」や「Deep Research」「その他」の各項目で、自由に記事を追加できる仕組みを導入しました。これにより、最新の研究進捗や日々の学び、個人的な出来事などをタイムリーに発信できるようになります。</li>
-                    </ul>
-                    <p>
-                        今後も、私の研究活動や興味深いテーマについて、定期的に記事を更新していく予定です。
-                        このサイトが、皆様にとって有益な情報源となれば幸いです。
-                        引き続き、泉諒音のポートフォリオをよろしくお願いいたします。
-                    </p>
+            <p>ここでは開発や環境構築で頻繁に使うコマンドをカテゴリ別にまとめています。必要に応じて随時追記します。</p>
+<h2>Docker / Docker Compose</h2>
+<ul>
+<li>Docker Composeを起動・停止</li>
+</ul>
+<pre><code class="language-bash">docker compose up -d       # バックグラウンドで起動
+docker compose down        # 停止・コンテナ削除
+docker compose stop        # 停止のみ
+</code></pre>
+<ul>
+<li>コンテナ内のシェルに入る</li>
+</ul>
+<pre><code class="language-bash">docker exec -it [コンテナ名またはID] bash # または sh
+</code></pre>
+<ul>
+<li>ビルドキャッシュを使わずにイメージを再構築</li>
+</ul>
+<pre><code class="language-bash">docker build --no-cache .
+</code></pre>
+<h2>Git</h2>
+<ul>
+<li>最新のリモートブランチを取り込む</li>
+</ul>
+<pre><code class="language-bash">git pull origin [ブランチ名]
+</code></pre>
+<ul>
+<li>変更をステージングに追加</li>
+</ul>
+<pre><code class="language-bash">git add .            # すべて追加
+git add [ファイル名] # 指定ファイルのみ
+</code></pre>
+<h2>使い方メモ</h2>
+<ul>
+<li>新しいコマンドを見つけたらこのページに追記します。</li>
+<li>よく忘れるオプションはコメントとして併記しておくと後で便利です。</li>
+</ul>
 
         </div>
         
@@ -145,22 +169,22 @@
             
             
                 
-            
-                
-            
-                
-            
-                
-            
-                
-            
-                
-            
-                
-            
-                
                     
                     
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
                 
             
                 

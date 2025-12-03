@@ -8,11 +8,11 @@ permalink: articles.html
     <div class="container">
         <h2 class="section-title">研究記事</h2>
         <div class="article-grid">
-            {% for article in articles %}
+            {% for article in collections.articlesOrdered %}
                 <div class="article-card">
-                    <h3 class="article-card-title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
-                    <p class="article-card-date">{{ article.displayDate }}</p>
-                    <p class="article-card-description">{{ article.description }}</p>
+                    <h3 class="article-card-title"><a href="{{ article.url }}">{{ article.data.title }}</a></h3>
+                    <p class="article-card-date">{{ article.data.displayDate or (article.date | fmtDate) }}</p>
+                    <p class="article-card-description">{{ article.data.description }}</p>
                     <a href="{{ article.url }}" class="read-more">続きを読む &gt;</a>
                 </div>
             {% endfor %}

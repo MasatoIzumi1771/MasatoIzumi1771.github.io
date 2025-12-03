@@ -4,6 +4,6 @@
   { "label": "研究", "url": "/research.html" },
   { "label": "スキル", "url": "/skills.html" },
   { "label": "研究記事", "url": "/articles.html" },
-  { "label": "コマンド", "url": "/commands.html" },
-  { "label": "その他", "url": "/other.html" }
+  { "label": "その他", "url": "/other.html" },
+  { "label": "検索", "url": "/search.html" }
 ]
