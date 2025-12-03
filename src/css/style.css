@@ -660,7 +660,7 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
 
 /* 各記事詳細ページ (articles/*.html) */
 .article-detail {
-    max-width: 800px; /* 幅を調整 */
+    max-width: 960px; /* 幅を広げる */
     margin: 40px auto; /* 余白を調整 */
     padding: 35px 40px; /* パディング調整 */
     background-color: #ffffff;
@@ -1060,7 +1060,7 @@ tr:last-child td:last-child { border-bottom-right-radius: 10px; }
         display: block; /* 横スクロールのために必要 */
     }
     .article-detail {
-        padding: 30px;
+        padding: 28px;
         margin: 30px auto;
     }
     .article-title {

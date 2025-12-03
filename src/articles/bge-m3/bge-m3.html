@@ -46,11 +46,11 @@ update: 技術メモ：BGE-M3の技術解説メモの記事を追加しました
 <p>
     テキスト内の各用語（トークン）の重要度を推定する手法です。クエリ内の各用語の重み $W_{q,i}$ は、対応する隠れ状態ベクトル $H_{q,i}$ と、学習によって得られる重み行列 $M_{lex}$ を用いて計算されます。
 </p>
-<p style="text-align: center;">$$W_{q,i} = \\text{ReLU}(H_{q,i} M_{lex})$$</p>
+<p style="text-align: center;">$$W_{q,i} = text{ReLU}(H_{q,i} M_{lex})$$</p>
 <p>
     最終的な関連度スコアは、クエリとパッセージの両方に共通して出現する用語について、それぞれの重みを掛け合わせた値を合計することで算出されます。
 </p>
-<p style="text-align: center;">$$Score_{lex}(q, p) = \\sum_{i,j \\text{ s.t. } q_i=p_j} \\max(0, W_{q,i}) \\cdot \\max(0, W_{p,j})$$</p>
+<p style="text-align: center;">$$Score_{lex}(q, p) = sum_{i,j text{ s.t. } q_i=p_j} max(0, W_{q,i}) cdot max(0, W_{p,j})$$</p>
 
 <h4>Multi-Vector Retrieval (多ベクトル検索)</h4>
 <p>
@@ -60,12 +60,12 @@ update: 技術メモ：BGE-M3の技術解説メモの記事を追加しました
 <p>
     その後、ColBERTで提案されたLate Interaction（遅延相互作用）メカニズムに基づき、クエリの各トークンベクトルと、パッセージの全トークンベクトルとの間で最も類似度が高いものを探し、それらのスコアを平均して最終的な関連度スコアとします。
 </p>
-<p style="text-align: center;">$$Score_{multi}(q, p) = \\frac{1}{|q|} \\sum_{i=1}^{|q|} \\max_{j=1}^{|p|} \\text{sim}(V_{q,i}, V_{p,j})$$</p>
+<p style="text-align: center;">$$Score_{multi}(q, p) = frac{1}{|q|} sum_{i=1}^{|q|} max_{j=1}^{|p|} text{sim}(V_{q,i}, V_{p,j})$$</p>
 <p>
     これら3つの手法を用いることで高い検索精度を達成しています。論文によると、各スコアを以下のように足し合わせます。
 </p>
-<p style="text-align: center;">$$Score_{hybrid}(q, p) = \\lambda_1 Score_{dense} + \\lambda_2 Score_{lex} + \\lambda_3 Score_{multi}$$</p>
-<p>論文によると、$\\lambda_2$ と $\\lambda_3$ は少し下げているとのことです。</p>
+<p style="text-align: center;">$$Score_{hybrid}(q, p) = lambda_1 Score_{dense} + lambda_2 Score_{lex} + lambda_3 Score_{multi}$$</p>
+<p>論文によると、$lambda_2$ と $lambda_3$ は少し下げているとのことです。</p>
 
 <h3>学習戦略</h3>
 <h4>自己知識蒸留 (Self-Knowledge Distillation)</h4>
