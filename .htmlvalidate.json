@@ -1,8 +1,0 @@
-{
-  "extends": ["html-validate:recommended"],
-  "rules": {
-    "close-order": "error",
-    "void-style": "error",
-    "no-trailing-whitespace": "warn"
-  }
-}
