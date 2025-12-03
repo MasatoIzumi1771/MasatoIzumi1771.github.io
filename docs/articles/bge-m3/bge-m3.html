@@ -4,16 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-        <title>BGE-M3：3つの検索手法を統合した新世代埋め込みモデル - Masato Izumi Portfolio</title>
     
-    <meta name="description" content="泉諒音の研究・スキル・記事をまとめたポートフォリオサイト">
+    
+    
+    
+        
+    
+
+    <title>BGE-M3：3つの検索手法を統合した新世代埋め込みモデル - Masato Izumi Portfolio</title>
+    <meta name="description" content="BGE-M3のアーキテクチャと学習戦略について包括的にまとめたメモ。">
+    <link rel="canonical" href="https://masatoizumi1771.github.io/articles/bge-m3/bge-m3.html">
+    <meta property="og:title" content="BGE-M3：3つの検索手法を統合した新世代埋め込みモデル - Masato Izumi Portfolio">
+    <meta property="og:description" content="BGE-M3のアーキテクチャと学習戦略について包括的にまとめたメモ。">
+    <meta property="og:url" content="https://masatoizumi1771.github.io/articles/bge-m3/bge-m3.html">
+    
+        <meta property="og:type" content="article">
+    
+    
+        <meta property="og:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BGE-M3：3つの検索手法を統合した新世代埋め込みモデル - Masato Izumi Portfolio">
+    <meta name="twitter:description" content="BGE-M3のアーキテクチャと学習戦略について包括的にまとめたメモ。">
+    
+        <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="search-index" content="/search-index.json">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
 </head>
-<body>
+<body id="top">
     <header class="header">
         <div class="header-inner">
             <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
@@ -55,13 +78,13 @@
                         
                         
                         <li class="nav-item">
-                            <a class="" href="/commands.html">コマンド</a>
+                            <a class="" href="/other.html">その他</a>
                         </li>
                     
                         
                         
                         <li class="nav-item">
-                            <a class="" href="/other.html">その他</a>
+                            <a class="" href="/search.html">検索</a>
                         </li>
                     
                 </ul>
@@ -81,8 +104,27 @@
 
 <section class="article-detail section">
     <div class="container">
+        <nav class="breadcrumb" aria-label="パンくずリスト">
+            <a href="/index.html">ホーム</a>
+            <span aria-hidden="true">/</span>
+            <a href="/articles.html">研究記事</a>
+            <span aria-hidden="true">/</span>
+            <span class="breadcrumb-current">BGE-M3：3つの検索手法を統合した新世代埋め込みモデル</span>
+        </nav>
         <h2 class="article-title">BGE-M3：3つの検索手法を統合した新世代埋め込みモデル</h2>
         <p class="article-meta">公開日: 2025.09.20</p>
+        
+            
+            
+                <ul class="tag-list" aria-label="タグ">
+                    
+                        <li class="tag-pill">検索</li>
+                    
+                        <li class="tag-pill">LLM</li>
+                    
+                </ul>
+            
+        
         <div class="article-body">
             <p>
     BGE-M3は、従来の単一的なベクトル検索（意味検索）の限界を超えるため、目的の異なる3つの検索手法を単一モデル内に統合することで、検索精度を飛躍的に向上させています。本稿では、その革新的なアーキテクチャと学習戦略について詳しく解説します。
@@ -119,11 +161,11 @@
 <p>
     テキスト内の各用語（トークン）の重要度を推定する手法です。クエリ内の各用語の重み $W_{q,i}$ は、対応する隠れ状態ベクトル $H_{q,i}$ と、学習によって得られる重み行列 $M_{lex}$ を用いて計算されます。
 </p>
-<p style="text-align: center;">$$W_{q,i} = \\text{ReLU}(H_{q,i} M_{lex})$$</p>
+<p style="text-align: center;">$$W_{q,i} = text{ReLU}(H_{q,i} M_{lex})$$</p>
 <p>
     最終的な関連度スコアは、クエリとパッセージの両方に共通して出現する用語について、それぞれの重みを掛け合わせた値を合計することで算出されます。
 </p>
-<p style="text-align: center;">$$Score_{lex}(q, p) = \\sum_{i,j \\text{ s.t. } q_i=p_j} \\max(0, W_{q,i}) \\cdot \\max(0, W_{p,j})$$</p>
+<p style="text-align: center;">$$Score_{lex}(q, p) = sum_{i,j text{ s.t. } q_i=p_j} max(0, W_{q,i}) cdot max(0, W_{p,j})$$</p>
 
 <h4>Multi-Vector Retrieval (多ベクトル検索)</h4>
 <p>
@@ -133,12 +175,12 @@
 <p>
     その後、ColBERTで提案されたLate Interaction（遅延相互作用）メカニズムに基づき、クエリの各トークンベクトルと、パッセージの全トークンベクトルとの間で最も類似度が高いものを探し、それらのスコアを平均して最終的な関連度スコアとします。
 </p>
-<p style="text-align: center;">$$Score_{multi}(q, p) = \\frac{1}{|q|} \\sum_{i=1}^{|q|} \\max_{j=1}^{|p|} \\text{sim}(V_{q,i}, V_{p,j})$$</p>
+<p style="text-align: center;">$$Score_{multi}(q, p) = frac{1}{|q|} sum_{i=1}^{|q|} max_{j=1}^{|p|} text{sim}(V_{q,i}, V_{p,j})$$</p>
 <p>
     これら3つの手法を用いることで高い検索精度を達成しています。論文によると、各スコアを以下のように足し合わせます。
 </p>
-<p style="text-align: center;">$$Score_{hybrid}(q, p) = \\lambda_1 Score_{dense} + \\lambda_2 Score_{lex} + \\lambda_3 Score_{multi}$$</p>
-<p>論文によると、$\\lambda_2$ と $\\lambda_3$ は少し下げているとのことです。</p>
+<p style="text-align: center;">$$Score_{hybrid}(q, p) = lambda_1 Score_{dense} + lambda_2 Score_{lex} + lambda_3 Score_{multi}$$</p>
+<p>論文によると、$lambda_2$ と $lambda_3$ は少し下げているとのことです。</p>
 
 <h3>学習戦略</h3>
 <h4>自己知識蒸留 (Self-Knowledge Distillation)</h4>
@@ -182,6 +224,48 @@
 </blockquote>
 
         </div>
+        
+            
+            
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+                    
+                    
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+            <div class="article-nav-links">
+                
+                
+            </div>
+        
         <div class="article-navigation">
             <a class="back-to-list" href="/articles.html">記事一覧に戻る</a>
         </div>
@@ -194,6 +278,7 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 Masato Izumi Portfolio</p>
+            <a class="footer-back-to-top" href="#top" aria-label="ページの先頭へ戻る">トップへ戻る</a>
         </div>
     </footer>
 

@@ -1,0 +1,21 @@
+---
+layout: layouts/base.njk
+title: 研究記事検索
+description: 研究記事のみを対象にした検索ページ。
+permalink: search.html
+---
+<section class="section" id="site-search">
+    <div class="container">
+        <h2 class="section-title">研究記事検索</h2>
+        <div class="search-box">
+            <label class="search-label" for="search-input">キーワード</label>
+            <input id="search-input" type="search" placeholder="例: RAG, Docker, Transformer" autocomplete="off" />
+            <p class="search-hint">研究記事のみを対象に、タイトル・本文の全文検索ができます。Enterで確定、または入力中に自動検索します。</p>
+        </div>
+        <div id="search-results" class="search-results" aria-live="polite"></div>
+    </div>
+</section>
+{% block scripts %}
+<script src="https://unpkg.com/lunr/lunr.js"></script>
+<script src="/js/search.js"></script>
+{% endblock %}

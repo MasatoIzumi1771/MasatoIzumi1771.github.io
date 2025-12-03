@@ -9,11 +9,46 @@ layout: layouts/base.njk
 
 <section class="article-detail section">
     <div class="container">
+        <nav class="breadcrumb" aria-label="パンくずリスト">
+            <a href="/index.html">ホーム</a>
+            <span aria-hidden="true">/</span>
+            <a href="/articles.html">研究記事</a>
+            <span aria-hidden="true">/</span>
+            <span class="breadcrumb-current">{{ title }}</span>
+        </nav>
         <h2 class="article-title">{{ title }}</h2>
         {% if date %}<p class="article-meta">公開日: {{ displayDate or date }}</p>{% endif %}
+        {% if tags %}
+            {% set displayTags = tags | reject('equalto', 'articles') %}
+            {% if displayTags | length %}
+                <ul class="tag-list" aria-label="タグ">
+                    {% for tag in displayTags %}
+                        <li class="tag-pill">{{ tag }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
         <div class="article-body">
             {{ content | safe }}
         </div>
+        {% if collections.articlesOrdered %}
+            {% set prevArticle = null %}
+            {% set nextArticle = null %}
+            {% for entry in collections.articlesOrdered %}
+                {% if entry.url == page.url %}
+                    {% set prevArticle = loop.previtem %}
+                    {% set nextArticle = loop.nextitem %}
+                {% endif %}
+            {% endfor %}
+            <div class="article-nav-links">
+                {% if prevArticle %}
+                    <a class="article-nav-link prev" href="{{ prevArticle.url }}">&larr; 前の記事: {{ prevArticle.data.title }}</a>
+                {% endif %}
+                {% if nextArticle %}
+                    <a class="article-nav-link next" href="{{ nextArticle.url }}">次の記事: {{ nextArticle.data.title }} &rarr;</a>
+                {% endif %}
+            </div>
+        {% endif %}
         <div class="article-navigation">
             <a class="back-to-list" href="/articles.html">記事一覧に戻る</a>
         </div>

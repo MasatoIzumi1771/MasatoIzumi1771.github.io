@@ -4,6 +4,12 @@ title: "Docker + GitLabで出る「invalid spec: :/tmp/ssh-agent.sock」エラ�
 date: 2025-05-29
 displayDate: 2025.05.29
 permalink: articles/Gitlab-ssh-error/Gitlab-ssh-error.html
+tags:
+  - articles
+  - Docker
+  - GitLab
+description: Docker + GitLabで発生する ssh-agent.sock エラーの原因と解決法。
+update: Docker + GitLabで出るエラーの原因と解決法の記事を追加しました。
 ---
 <p>
                         GitLab 上のプロジェクトを Docker コンテナの中からクローンやプッシュなどの操作を行う際、SSH 認証が必要になります。通常ローカルでは、ホスト側の SSH エージェント（ssh-agent）が秘密鍵を保持しており、そのソケットファイルへのパスが **SSH_AUTH_SOCK** です。

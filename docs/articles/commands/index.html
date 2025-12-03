@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    
+    
+        
+    
+
+    <title>よく使うコマンド集 - Masato Izumi Portfolio</title>
+    <meta name="description" content="DockerやGitでよく使うコマンドを自分用メモとしてまとめました。">
+    <link rel="canonical" href="https://masatoizumi1771.github.io/articles/commands/">
+    <meta property="og:title" content="よく使うコマンド集 - Masato Izumi Portfolio">
+    <meta property="og:description" content="DockerやGitでよく使うコマンドを自分用メモとしてまとめました。">
+    <meta property="og:url" content="https://masatoizumi1771.github.io/articles/commands/">
+    
+        <meta property="og:type" content="article">
+    
+    
+        <meta property="og:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="よく使うコマンド集 - Masato Izumi Portfolio">
+    <meta name="twitter:description" content="DockerやGitでよく使うコマンドを自分用メモとしてまとめました。">
+    
+        <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="search-index" content="/search-index.json">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
+</head>
+<body id="top">
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
+            <nav class="nav">
+                <ul class="nav-list">
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/index.html">ホーム</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research_achievements.html">研究実績</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research.html">研究</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/skills.html">スキル</a>
+                        </li>
+                    
+                        
+                        
+                            
+                        
+                        <li class="nav-item">
+                            <a class="active-link" href="/articles.html">研究記事</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/other.html">その他</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/search.html">検索</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+            <button class="menu-toggle" aria-label="メニューを開く">
+                <span class="menu-icon"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+
+<section class="article-detail section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="パンくずリスト">
+            <a href="/index.html">ホーム</a>
+            <span aria-hidden="true">/</span>
+            <a href="/articles.html">研究記事</a>
+            <span aria-hidden="true">/</span>
+            <span class="breadcrumb-current">よく使うコマンド集</span>
+        </nav>
+        <h2 class="article-title">よく使うコマンド集</h2>
+        <p class="article-meta">公開日: 2025.09.30</p>
+        
+            
+            
+                <ul class="tag-list" aria-label="タグ">
+                    
+                        <li class="tag-pill">コマンド</li>
+                    
+                        <li class="tag-pill">開発</li>
+                    
+                </ul>
+            
+        
+        <div class="article-body">
+            <p>ここでは開発や環境構築で頻繁に使うコマンドをカテゴリ別にまとめています。必要に応じて随時追記します。</p>
+<h2>Docker / Docker Compose</h2>
+<ul>
+<li>Docker Composeを起動・停止</li>
+</ul>
+<pre><code class="language-bash">docker compose up -d       # バックグラウンドで起動
+docker compose down        # 停止・コンテナ削除
+docker compose stop        # 停止のみ
+</code></pre>
+<ul>
+<li>コンテナ内のシェルに入る</li>
+</ul>
+<pre><code class="language-bash">docker exec -it [コンテナ名またはID] bash # または sh
+</code></pre>
+<ul>
+<li>ビルドキャッシュを使わずにイメージを再構築</li>
+</ul>
+<pre><code class="language-bash">docker build --no-cache .
+</code></pre>
+<h2>Git</h2>
+<ul>
+<li>最新のリモートブランチを取り込む</li>
+</ul>
+<pre><code class="language-bash">git pull origin [ブランチ名]
+</code></pre>
+<ul>
+<li>変更をステージングに追加</li>
+</ul>
+<pre><code class="language-bash">git add .            # すべて追加
+git add [ファイル名] # 指定ファイルのみ
+</code></pre>
+<h2>使い方メモ</h2>
+<ul>
+<li>新しいコマンドを見つけたらこのページに追記します。</li>
+<li>よく忘れるオプションはコメントとして併記しておくと後で便利です。</li>
+</ul>
+
+        </div>
+        
+            
+            
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+                    
+                    
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+            <div class="article-nav-links">
+                
+                
+            </div>
+        
+        <div class="article-navigation">
+            <a class="back-to-list" href="/articles.html">記事一覧に戻る</a>
+        </div>
+    </div>
+</section>
+
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Masato Izumi Portfolio</p>
+            <a class="footer-back-to-top" href="#top" aria-label="ページの先頭へ戻る">トップへ戻る</a>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    
+</body>
+</html>

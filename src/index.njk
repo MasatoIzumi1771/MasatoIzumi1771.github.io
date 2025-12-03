@@ -45,8 +45,10 @@ permalink: index.html
         <div class="update-history">
             <h3 class="subsection-title">更新履歴</h3>
             <ul>
-                {% for update in updates %}
-                    <li><span class="update-date">{{ update.date }}</span> - {{ update.text }}</li>
+                {% for article in collections.articlesOrdered | limit(5) %}
+                    {% set displayDate = article.data.displayDate or (article.date | fmtDate) %}
+                    {% set updateText = article.data.update or (article.data.title + ' を追加しました。') %}
+                    <li><span class="update-date">{{ displayDate }}</span> - {{ updateText }}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -54,11 +56,11 @@ permalink: index.html
         <div class="latest-articles">
             <h3 class="subsection-title">最新の研究記事</h3>
             <div class="article-list">
-                {% for article in articles | limit(2) %}
+                {% for article in collections.articlesOrdered | limit(2) %}
                     <div class="article-preview scroll-animate-item">
-                        <h4><a href="{{ article.url }}">{{ article.title }}</a></h4>
-                        <p class="article-date">{{ article.displayDate }}</p>
-                        <p>{{ article.description }}</p>
+                        <h4><a href="{{ article.url }}">{{ article.data.title }}</a></h4>
+                        <p class="article-date">{{ article.data.displayDate or (article.date | fmtDate) }}</p>
+                        <p>{{ article.data.description }}</p>
                     </div>
                 {% endfor %}
             </div>
