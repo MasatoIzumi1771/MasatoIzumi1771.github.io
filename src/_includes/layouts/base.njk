@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if title %}
+        <title>{{ title }} - {{ site.title }}</title>
+    {% else %}
+        <title>{{ site.title }}</title>
+    {% endif %}
+    <meta name="description" content="{{ description or site.description }}">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
+            <nav class="nav">
+                <ul class="nav-list">
+                    {% for item in nav %}
+                        {% set isActive = page.url == item.url %}
+                        {% if item.url == '/articles.html' and page.url and page.url.indexOf('/articles/') === 0 %}
+                            {% set isActive = true %}
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="{% if isActive %}active-link{% endif %}" href="{{ item.url }}">{{ item.label }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+            <button class="menu-toggle" aria-label="メニューを開く">
+                <span class="menu-icon"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {{ content | safe }}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Masato Izumi Portfolio</p>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

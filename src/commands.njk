@@ -1,0 +1,60 @@
+---
+layout: layouts/base.njk
+title: コマンド
+description: よく使う開発・研究向けのコマンド集。
+permalink: commands.html
+---
+<section id="commands" class="section">
+    <div class="container">
+        <h2 class="section-title">よく使うコマンド集</h2>
+        <p class="lead-text">
+            このセクションでは、開発や研究で頻繁に利用するコマンドやその使い方をまとめています。<br>
+            特に便利なものを厳選して紹介しており、必要に応じて随時更新していきます。
+        </p>
+
+        <div class="command-category-section">
+            <h3 class="subsection-title">Docker / Docker Compose</h3>
+            <div class="command-list">
+                <div class="command-item card">
+                    <h4>Docker Composeを起動・停止</h4>
+                    <pre><code>docker compose up -d       # バックグラウンドで起動
+docker compose down        # 停止・コンテナ削除
+docker compose stop        # 停止のみ
+</code></pre>
+                    <p class="command-description">Docker Composeで定義されたサービスを起動・停止します。</p>
+                </div>
+                <div class="command-item card">
+                    <h4>コンテナ内のシェルに入る</h4>
+                    <pre><code>docker exec -it [コンテナ名またはID] bash # または sh
+</code></pre>
+                    <p class="command-description">実行中のコンテナ内でシェル操作を行います。</p>
+                </div>
+                <div class="command-item card">
+                    <h4>ビルドキャッシュを使わずにDockerイメージを再構築</h4>
+                    <pre><code>docker build --no-cache .
+</code></pre>
+                    <p class="command-description">Dockerfileからイメージを再構築する際に、キャッシュを使わずに行います。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="command-category-section">
+            <h3 class="subsection-title">Git コマンド</h3>
+            <div class="command-list">
+                <div class="command-item card">
+                    <h4>最新のリモートブランチを取り込む</h4>
+                    <pre><code>git pull origin [ブランチ名]
+</code></pre>
+                    <p class="command-description">リモートリポジトリの変更をローカルに取り込みます。</p>
+                </div>
+                <div class="command-item card">
+                    <h4>変更をステージングエリアに追加</h4>
+                    <pre><code>git add .                  # 全ての変更を追加
+git add [ファイル名]       # 特定のファイルを追加
+</code></pre>
+                    <p class="command-description">次のコミットに含めたい変更をステージングに追加します。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

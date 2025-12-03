@@ -1,0 +1,9 @@
+[
+  { "label": "ホーム", "url": "/index.html" },
+  { "label": "研究実績", "url": "/research_achievements.html" },
+  { "label": "研究", "url": "/research.html" },
+  { "label": "スキル", "url": "/skills.html" },
+  { "label": "研究記事", "url": "/articles.html" },
+  { "label": "コマンド", "url": "/commands.html" },
+  { "label": "その他", "url": "/other.html" }
+]

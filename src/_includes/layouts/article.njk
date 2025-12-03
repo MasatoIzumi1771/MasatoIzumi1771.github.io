@@ -1,0 +1,22 @@
+---
+layout: layouts/base.njk
+---
+{% block head %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+{% endblock %}
+
+<section class="article-detail section">
+    <div class="container">
+        <h2 class="article-title">{{ title }}</h2>
+        {% if date %}<p class="article-meta">公開日: {{ displayDate or date }}</p>{% endif %}
+        <div class="article-body">
+            {{ content | safe }}
+        </div>
+        <div class="article-navigation">
+            <a class="back-to-list" href="/articles.html">記事一覧に戻る</a>
+        </div>
+    </div>
+</section>
+{% block scripts %}{% endblock %}
