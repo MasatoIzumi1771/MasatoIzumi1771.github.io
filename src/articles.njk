@@ -1,0 +1,21 @@
+---
+layout: layouts/base.njk
+title: 研究記事
+description: 研究記事一覧。
+permalink: articles.html
+---
+<section id="research-articles" class="section">
+    <div class="container">
+        <h2 class="section-title">研究記事</h2>
+        <div class="article-grid">
+            {% for article in articles %}
+                <div class="article-card">
+                    <h3 class="article-card-title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+                    <p class="article-card-date">{{ article.displayDate }}</p>
+                    <p class="article-card-description">{{ article.description }}</p>
+                    <a href="{{ article.url }}" class="read-more">続きを読む &gt;</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
