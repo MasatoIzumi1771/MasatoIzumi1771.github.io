@@ -30,9 +30,40 @@
         <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
     
     <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        
+        "name": "Masato Izumi Portfolio",
+        "description": "泉諒音の研究・スキル・記事をまとめたポートフォリオサイト",
+        "url": "https://masatoizumi1771.github.io",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "jobTitle": "R&D Engineer",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "企業 R&D"
+            },
+            "sameAs": [
+                "https://researchmap.jp/masatoizumi",
+                "https://orcid.org/0000-0002-8450-9028"
+            ]
+        }
+        
+    }
+    </script>
+
     <link rel="stylesheet" href="/css/style.css">
+
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
 </head>
@@ -40,7 +71,7 @@
     <header class="header">
         <div class="header-inner">
             <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
-            <nav class="nav">
+            <nav class="nav" id="nav">
                 <ul class="nav-list">
                     
                         
@@ -87,7 +118,10 @@
                     
                 </ul>
             </nav>
-            <button class="menu-toggle" aria-label="メニューを開く">
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
                 <span class="menu-icon"></span>
             </button>
         </div>
@@ -121,6 +155,7 @@
         </div>
     </footer>
 
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
     <script src="/js/main.js"></script>
     
 </body>

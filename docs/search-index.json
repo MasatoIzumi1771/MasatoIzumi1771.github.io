@@ -9,30 +9,6 @@
 },
 
 {
-  "title": "2回目のリニューアル",
-  "url": "/articles/renewal2/renewal2.html",
-  "date": "2025.12.03",
-  "description": "検索追加、UIの小改修、運用改善をまとめたゆるい振り返り。",
-  "content": "2回目のリニューアル、やりました 「もっとさっと探せて、さっと書ける」をテーマに、小さく回したアップデートのまとめです。 1. 研究記事検索を追加 Lunr.js で記事全文検索を実装。RAG、Docker、Transformer などのキーワードで一発ヒット。 インデックスはビルド時に自動生成。記事を増やしても手動更新なし。 2. UI をちょっと手入れ ヘッダーに薄いグラデーションを追加し、モバイルでも視認性アップ。 フッターに「トップへ戻る」ボタンを配置。長文でも帰り道を確保。 パンくず・タグ・前後記事リンクを追加し、記事間の回遊性を向上。 3. 運用まわりを整理 記事は Markdown/HTML どちらでもOKに統一。tags: [articles, ...] を付ければ一覧・更新履歴に自動反映。 GitHub Pages 用に docs/ をビルド出力。npm run build → push だけでデプロイ完了。 検索用の search-index.json も自動生成。運用コストはほぼゼロ。 4. これから 画像最適化（WebP + srcset）と OGP サムネ自動生成を検討中。 記事テンプレートの省力化（ドラフトフラグ、自動日付挿入）も整備したい。 ゆるく回しつつ、読みやすさと更新のしやすさを両立していきます。次の小改修もお楽しみに。"
-},
-
-{
-  "title": "サンプル記事（Markdown）",
-  "url": "false",
-  "date": "2025.10.01",
-  "description": "サンプルのMarkdown記事です。これをベースに書き換えてください。",
-  "content": "見出し1（タイトル） 本文をMarkdownで書きます。改行やリスト、コードブロックがそのまま使えます。 見出し2 箇条書きも そのまま使えます。 # bashのコードブロック例 echo &quot;Hello Markdown&quot; 画像は同じフォルダに置いて、相対パスで参照します。 引用もOKです。 見出し3 もう少し細かい見出しも使えます。"
-},
-
-{
-  "title": "サンプル記事（Markdown）",
-  "url": "false",
-  "date": "2025.10.01",
-  "description": "サンプルのMarkdown記事です。これをベースに書き換えてください。",
-  "content": "見出し1（タイトル） 本文をMarkdownで書きます。改行やリスト、コードブロックがそのまま使えます。 見出し2 箇条書きも そのまま使えます。 # bashのコードブロック例 echo &quot;Hello Markdown&quot; 画像は同じフォルダに置いて、相対パスで参照します。 引用もOKです。 見出し3 もう少し細かい見出しも使えます。"
-},
-
-{
   "title": "よく使うコマンド集",
   "url": "/articles/commands/",
   "date": "2025.09.30",
@@ -78,38 +54,6 @@
   "date": "2025.05.28",
   "description": "Docker + PoetryでPython開発環境を構築する手順メモ。",
   "content": "Pythonプロジェクトの開発環境を整える際、依存関係の管理や環境の再現性は常に課題となります。 本記事では、この課題を解決するための強力な組み合わせ、**Docker**と**Poetry**を利用したPython開発環境の構築方法について解説します。 これにより、プロジェクトごとにクリーンで再現性の高い環境を簡単に構築し、開発を効率的に進めることができるようになります。 なぜDockerとPoetryを使うのか？ Dockerはアプリケーションをコンテナとして隔離し、環境依存の問題を解消します。これにより「私の環境では動くのに…」といった問題をなくし、チーム開発やデプロイをスムーズにします。 一方、PoetryはPythonプロジェクトの依存関係管理とパッケージングを強力にサポートします。仮想環境の作成から依存ライブラリのインストール、スクリプト実行まで一元的に管理できるため、pipやvenvといった既存のツールに比べて格段に使いやすさが向上します。 この二つを組み合わせることで、OSや既存のPython環境に影響を与えることなく、プロジェクトに最適な開発環境を構築できます。 環境構築のファイル構成 まずは、今回構築する環境のファイル構成を見てみましょう。 . ├── .devcontainer/ │ └── devcontainer.json ├── .vscode/ │ └── settings.json ├── app/ │ └── main.py ├── docker-compose.yml ├── Dockerfile ├── poetry.lock (初回起動時に自動生成) ├── pyproject.toml └── README.md この構成で、コンテナの定義、Pythonプロジェクトの設定、VS Codeの統合設定までをカバーしています。 Dockerfile: コンテナの設計図 `Dockerfile`は、Python 3.12をベースに、Poetry、必要なシステムライブラリ、そして開発に必要なPythonライブラリをインストールする手順を定義します。 ここでは、`matplotlib`、`numpy`、`torch`、`japanize-matplotlib`、そしてVS CodeでJupyter Notebookを利用するためのライブラリを事前にインストールしています。 FROM python:3.12-slim-bookworm # タイムゾーンの設定 (任意) ENV TZ=Asia/Tokyo RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone # Poetryのインストール RUN pip install poetry==1.8.2 # 作業ディレクトリの設定 WORKDIR /app # Poetryのパス設定 (PATHに追加) ENV PATH=\"/root/.local/bin:$PATH\" # 依存関係のキャッシュを効率化するために、pyproject.tomlとpoetry.lockを先にコピー COPY pyproject.toml poetry.lock* ./ # 必要なシステムライブラリをインストール # matplotlib, numpy, torch, japanize-matplotlib, Jupyter Notebook関連 RUN apt-get update && apt-get install -y \\ build-essential \\ git \\ libffi-dev \\ libssl-dev \\ zlib1g-dev \\ libjpeg-dev \\ && rm -rf /var/lib/apt/lists/* # Poetryの依存関係をインストール # ここでJupyter Notebook関連のライブラリもインストールされます RUN poetry install --no-root --no-interaction --no-ansi # アプリケーションコードのコピー COPY . . # コンテナ起動時のデフォルトコマンド (任意) # CMD [\"bash\"] コード1: Dockerfileの内容 pyproject.toml: プロジェクトの依存関係と設定 `pyproject.toml`はPoetryがプロジェクトの依存関係を管理するための中心的なファイルです。 今回は、前述のライブラリに加えて、Jupyter Notebook関連のライブラリも追加しています。 PyTorchについては、CPU版を想定したソースを指定しています。GPU版を使用する場合は、適宜変更してください。 [tool.poetry] name = \"my-python-project\" version = \"0.1.0\" description = \"\" authors = [\"Your Name &lt;you@example.com&gt;\"] readme = \"README.md\" [tool.poetry.dependencies] python = \"^3.12\" matplotlib = \"^3.8.4\" numpy = \"^1.26.4\" torch = {version = \"^2.2.2\", source = \"pytorch\"} japanize-matplotlib = \"^1.1.3\" ipykernel = \"^6.29.4\" jupyter = \"^1.0.0\" notebook = \"^7.1.3\" ipython = \"^8.23.0\" [build-system] requires = [\"poetry-core\"] build-backend = \"poetry.core.masonry.api\" [[tool.poetry.source]] name = \"pytorch\" url = \"https://download.pytorch.org/whl/cpu\" priority = \"explicit\" コード2: pyproject.tomlの内容 docker-compose.yml: サービス定義と起動設定 `docker-compose.yml`は、Dockerコンテナをまとめて管理するためのファイルです。 `Dockerfile`で定義したイメージを元に`app`サービスを構築し、ホストOSとコンテナ間でファイルを共有（ボリュームマウント）、Jupyter Notebook用にポートを公開しています。 version: '3.8' services: app: build: context: . dockerfile: Dockerfile volumes: - .:/app ports: - \"8888:8888\" # Jupyter Notebook用 working_dir: /app tty: true # コンテナ内でbashを継続させるために必要 コード3: docker-compose.ymlの内容 VS Code連携のための設定ファイル VS Codeの「Remote - Containers」拡張機能を使うと、コンテナ内部を直接開発環境として利用できます。 `.devcontainer/devcontainer.json`と`.vscode/settings.json`は、この連携をスムーズにするための設定です。 特に`devcontainer.json`では、コンテナ起動後に自動で依存関係をインストールする設定などを記述しています。 // .devcontainer/devcontainer.json { \"name\": \"Python 3.12 with Poetry\", \"dockerComposeFile\": \"../docker-compose.yml\", \"service\": \"app\", \"workspaceFolder\": \"/app\", \"customizations\": { \"vscode\": { \"extensions\": [ \"ms-python.python\", \"ms-toolsai.jupyter\" ], \"settings\": { \"python.defaultInterpreterPath\": \"/root/.local/share/pypoetry/venv/bin/python\", \"python.terminal.activateEnvironment\": true, \"jupyter.notebookFileRoot\": \"${workspaceFolder}\" } } }, \"postStartCommand\": \"poetry install --no-root\", \"remoteUser\": \"root\" } コード4: .devcontainer/devcontainer.jsonの内容 // .vscode/settings.json { \"python.languageServer\": \"Pylance\", \"python.analysis.autoImportCompletions\": true, \"python.terminal.activateEnvironment\": true, \"jupyter.notebookFileRoot\": \"${workspaceFolder}\" } コード5: .vscode/settings.jsonの内容 環境構築と使い方 ファイルの準備ができたら、いよいよ環境を構築し、使ってみましょう。 1. Docker Composeで環境を起動 プロジェクトのルートディレクトリで以下のコマンドを実行します。初回はイメージのビルドに時間がかかります。 docker compose up --build -d これにより、バックグラウンドでコンテナが起動します。 2. コンテナに入る 起動したコンテナ内で作業を行うには、以下のコマンドでシェルに入ります。 docker compose exec app bash Dockerコンテナのシェル内でできること `docker compose exec app bash` コマンドでコンテナのシェルに入った後、通常のLinux環境と同様に様々な操作が可能です。 **ファイル操作**: `ls`, `cd`, `pwd`, `cp`, `mv`, `rm`, `mkdir` など、基本的なファイル・ディレクトリ操作コマンドが利用できます。 **テキストエディタ**: `vi` や `nano` (Dockerfileでインストールしていれば) を使ってファイルを直接編集できます。 **プロセスの確認**: `ps aux` で現在実行中のプロセスを確認できます。 **ネットワークコマンド**: `ping`, `curl`, `wget` などで外部との通信を確認したり、リソースをダウンロードしたりできます。 **システム情報の確認**: `df -h` (ディスク使用量), `free -h` (メモリ使用量) などでコンテナのシステム状況を確認できます。 **Poetryコマンドの実行**: `poetry env list`: 作成された仮想環境のリストを表示します。 `poetry run python -c \"import sys; print(sys.version)\"`: コンテナ内のPythonバージョンを確認できます。 `poetry run &lt;コマンド&gt;`: Poetryが管理する仮想環境内で任意のコマンドを実行します。 **Pythonインタプリタの起動**: `poetry run python` でPythonの対話型シェルを起動し、コードを試すことができます。 **Jupyter Notebookの起動 (オプション)**: `docker-compose.yml`でポートを公開している場合、コンテナ内でJupyter Notebookを起動し、ホストのブラウザからアクセスできます。 poetry run jupyter lab --ip=0.0.0.0 --port=8888 --allow-root --no-browser 上記コマンド実行後、表示されるURL（トークン付き）をホストのブラウザで開くと、Jupyter Labにアクセスできます。 これらの操作を通じて、コンテナ内部の環境を探索し、デバッグや追加設定を行うことができます。 3. Poetryコマンドの利用 コンテナ内ではPoetryが利用可能です。 **新しいライブラリの追加**: `poetry add &lt;パッケージ名&gt;` **依存関係のインストール**: `poetry install` (pyproject.tomlに基づいて依存関係をインストール) **スクリプトの実行**: `poetry run python app/main.py` 4. VS Code Remote - Containersでの開発 最もおすすめの開発方法です。VS Codeに「Remote - Containers」拡張機能をインストールした後、以下の手順で開発を開始できます。 VS Codeを開き、コマンドパレット (`Ctrl+Shift+P` または `Cmd+Shift+P`) を開き、「Remote-Containers: Open Folder in Container...」を選択します。 このプロジェクトのルートディレクトリを選択します。 VS Codeが自動的にコンテナに接続し、その中で開発環境を開きます。ターミナルもコンテナ内につながり、Jupyter Notebookもシームレスに利用できます。 サンプルコード `app/main.py`に以下のサンプルコードを配置することで、`matplotlib`や`japanize-matplotlib`、`numpy`、`torch`が正しく動作するかを確認できます。 import matplotlib.pyplot as plt import japanize_matplotlib import numpy as np import torch def main(): print(\"Hello from Dockerized Poetry environment!\") print(f\"NumPy version: {np.__version__}\") print(f\"Torch version: {torch.__version__}\") # Matplotlibとjapanize-matplotlibのテスト x = np.linspace(0, 2 * np.pi, 100) y = np.sin(x) plt.figure(figsize=(8, 6)) plt.plot(x, y) plt.title(\"正弦波のグラフ（日本語対応）\") plt.xlabel(\"X軸\") plt.ylabel(\"Y軸\") plt.grid(True) # plt.show() # VS CodeのJupyterなどで実行する場合はコメントアウト if __name__ == \"__main__\": main() コード6: app/main.pyのサンプルコード `plt.show()`はGUI環境が必要なため、Jupyter Notebookやインタラクティブシェルで実行する場合はコメントアウトまたは適切に処理してください。 まとめと今後の展望 DockerとPoetryを組み合わせることで、Python開発の環境構築が格段に効率化され、プロジェクトの再現性と保守性が向上します。 特にVS CodeのRemote - Containers機能との連携は、開発体験を大きく向上させるでしょう。 このテンプレートを基に、皆さんのPythonプロジェクトがよりスムーズに進むことを願っています。 ご質問やさらなるカスタマイズのご要望があれば、お気軽にご連絡ください。"
-},
-
-{
-  "title": "研究記事: このHPについて",
-  "url": "/articles/about_this_hp/about_this_hp.html",
-  "date": "2025.05.21",
-  "description": "本ホームページの目的や構成、今後の更新方針について。",
-  "content": "本ホームページは、私がこれまでに取り組んできた研究活動、習得したスキル、そして個人的な興味や出来事をまとめたポートフォリオサイトです。 大学院での研究活動を中心に、定期的に内容を更新していく予定です。 サイトの目的 **研究成果の公開**: 私の論文や学会発表などの研究実績を一覧でご確認いただけます。 **研究テーマの詳細**: 現在取り組んでいる研究テーマや関連分野について、より深く掘り下げてご紹介します。 **スキルの可視化**: 習得しているプログラミング言語、ツール、資格などを明確に示します。 **研究記事の発信**: 日々の研究で得られた知見や、注目している技術トレンドなどについて、ブログ形式で情報発信を行います。 **Deep Researchの共有**: 特定の深いテーマについて、詳細な考察や実験結果を記事として共有します。 **個性の表現**: 「その他」のセクションでは、研究以外の個人的な活動や趣味など、私自身の人間性を知っていただけるようなコンテンツも提供します。 このサイトを通じて、私の専門性や熱意を皆様に知っていただき、研究交流や新たな機会に繋がればと考えております。 ご意見やご感想、共同研究のご提案などございましたら、お気軽にご連絡ください。"
-},
-
-{
-  "title": "リニューアルのポイント",
-  "url": "/articles/renewal/renewal.html",
-  "date": "2025.05.21",
-  "description": "ポートフォリオサイトをリニューアルしたポイントのまとめ。",
-  "content": "この度、私のポートフォリオサイトのデザインと構成を全面的にリニューアルいたしました！ リニューアルのポイント **情報整理の改善**: 「ホーム」「研究実績」「研究」「スキル」「研究記事」「Deep Research」「その他」とカテゴリを明確に分け、ヘッダーから簡単に各ページへアクセスできるようになりました。 **記事機能の充実**: 「研究記事」や「Deep Research」「その他」の各項目で、自由に記事を追加できる仕組みを導入しました。これにより、最新の研究進捗や日々の学び、個人的な出来事などをタイムリーに発信できるようになります。 今後も、私の研究活動や興味深いテーマについて、定期的に記事を更新していく予定です。 このサイトが、皆様にとって有益な情報源となれば幸いです。 引き続き、泉諒音のポートフォリオをよろしくお願いいたします。"
-},
-
-{
-  "title": "記事タイトルをここに書く",
-  "url": "false",
-  "date": "2025.MM.DD",
-  "description": "記事の概要を一文で書きます（例：◯◯の技術メモ）。",
-  "content": "この記事はテンプレートです このフォルダごとコピーし、フロントマターを以下に沿って書き換えてください。 title: 記事タイトル date: 作成日 (YYYY-MM-DD) displayDate: 表示用日付 (YYYY.MM.DD) permalink: 公開パス (例: articles/my-article/index.html) tags: 少なくとも articles を含める（例: - articles） description: 要約文 update: 更新履歴に出す文面 Markdownで書く場合（推奨） --- layout: layouts/article.njk title: サンプル記事 date: 2025-10-01 displayDate: 2025.10.01 permalink: articles/sample-article/index.html tags: - articles - サンプル description: サンプル記事の概要です。 update: サンプル記事を追加しました。 --- # 見出し 本文をMarkdownで書きます。 ```bash echo \"コード例\" ``` ![画像説明](./sample.png) HTMLで書く場合 --- layout: layouts/article.njk title: サンプル記事 date: 2025-10-01 displayDate: 2025.10.01 permalink: articles/sample-article/index.html tags: - articles - サンプル description: サンプル記事の概要です。 update: サンプル記事を追加しました。 --- 見出し 本文をHTMLで書きます。 echo \"コード例\" 画像の置き方 画像ファイルをこのフォルダに入れ、Markdownなら ![説明](./ファイル名.png)、HTMLなら &lt;img src=\"./ファイル名.png\"&gt; で参照してください。"
-},
-
-{
-  "title": "記事タイトルをここに書く",
-  "url": "false",
-  "date": "2025.MM.DD",
-  "description": "記事の概要を一文で書きます（例：◯◯の技術メモ）。",
-  "content": "この記事はテンプレートです このフォルダごとコピーし、フロントマターを以下に沿って書き換えてください。 title: 記事タイトル date: 作成日 (YYYY-MM-DD) displayDate: 表示用日付 (YYYY.MM.DD) permalink: 公開パス (例: articles/my-article/index.html) tags: 少なくとも articles を含める（例: - articles） description: 要約文 update: 更新履歴に出す文面 Markdownで書く場合（推奨） --- layout: layouts/article.njk title: サンプル記事 date: 2025-10-01 displayDate: 2025.10.01 permalink: articles/sample-article/index.html tags: - articles - サンプル description: サンプル記事の概要です。 update: サンプル記事を追加しました。 --- # 見出し 本文をMarkdownで書きます。 ```bash echo \"コード例\" ``` ![画像説明](./sample.png) HTMLで書く場合 --- layout: layouts/article.njk title: サンプル記事 date: 2025-10-01 displayDate: 2025.10.01 permalink: articles/sample-article/index.html tags: - articles - サンプル description: サンプル記事の概要です。 update: サンプル記事を追加しました。 --- 見出し 本文をHTMLで書きます。 echo \"コード例\" 画像の置き方 画像ファイルをこのフォルダに入れ、Markdownなら ![説明](./ファイル名.png)、HTMLなら &lt;img src=\"./ファイル名.png\"&gt; で参照してください。"
 },
 
 {

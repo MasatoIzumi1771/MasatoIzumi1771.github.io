@@ -30,9 +30,40 @@
         <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
     
     <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        
+        "headline": "SuperRAG: 文書レイアウトを理解する次世代 RAG の仕組みと性能を徹底解説する",
+        "datePublished": "2025-12-10",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "url": "https://masatoizumi1771.github.io"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Masato Izumi"
+        },
+        "description": "文書のレイアウト構造ごと理解する「SuperRAG」の仕組みと性能を、図表付きで解説します。",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://masatoizumi1771.github.io/articles/superRAG/"
+        }
+        
+    }
+    </script>
+
     <link rel="stylesheet" href="/css/style.css">
+
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
 </head>
@@ -40,7 +71,7 @@
     <header class="header">
         <div class="header-inner">
             <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
-            <nav class="nav">
+            <nav class="nav" id="nav">
                 <ul class="nav-list">
                     
                         
@@ -89,7 +120,10 @@
                     
                 </ul>
             </nav>
-            <button class="menu-toggle" aria-label="メニューを開く">
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
                 <span class="menu-icon"></span>
             </button>
         </div>
@@ -97,9 +131,7 @@
 
     <main class="main-content">
         
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
 
 
 <section class="article-detail section">
@@ -112,7 +144,10 @@
             <span class="breadcrumb-current">SuperRAG: 文書レイアウトを理解する次世代 RAG の仕組みと性能を徹底解説する</span>
         </nav>
         <h2 class="article-title">SuperRAG: 文書レイアウトを理解する次世代 RAG の仕組みと性能を徹底解説する</h2>
-        <p class="article-meta">公開日: 2025.12.10</p>
+        <div class="article-meta-info">
+            <p class="article-meta">公開日: 2025.12.10</p>
+            <p class="reading-time" id="reading-time"></p>
+        </div>
         
             
             
@@ -127,6 +162,10 @@
                 </ul>
             
         
+        <nav class="toc" id="toc" aria-label="目次">
+            <h3 class="toc-title">目次</h3>
+            <ul class="toc-list" id="toc-list"></ul>
+        </nav>
         <div class="article-body">
             <h1>SuperRAG: 文書レイアウトを理解する次世代 RAG の仕組みと性能を徹底解説する</h1>
 <p>RAG（Retrieval-Augmented Generation）は、技術文書やマニュアル、研究資料の検索・QA に広く使われている。しかし従来の RAG は、文書を <strong>「テキストチャンクの集合」</strong> として扱うことが前提で、図や表、段組み、キャプションなどを一切考慮しない。そのため本文と図表の関係性を理解できず、重要な情報が落ちる。</p>
@@ -157,7 +196,7 @@
 <li>図・表のキャプション</li>
 </ul>
 <p>こうして文書を Document Graph に変換し、構造を保持したまま retrieval できる。</p>
-<p><img src="./super_RAG_fig1.png" alt="Figure 3: The proposed SuperRAG framework"></p>
+<p><img src="./super_RAG_fig1.png" alt="Figure 3: The proposed SuperRAG framework" loading="lazy"></p>
 <p>ポイント:</p>
 <ul>
 <li>図の近くにある説明文</li>
@@ -180,10 +219,10 @@
 <li>「キャプションの意図を本文と統合して要約せよ」</li>
 </ul>
 <p>従来 RAG でバラバラだった情報を、まとめて取り出せる。</p>
-<p><img src="./super_RAG_fig2.png" alt="Graph-aware retrieval flow"></p>
+<p><img src="./super_RAG_fig2.png" alt="Graph-aware retrieval flow" loading="lazy"></p>
 <h2>実際の性能：SuperRAG はどれくらい強いのか？</h2>
 <h3>Table 1: Document Reading Performance</h3>
-<p><img src="./super_RAG_table1.png" alt="Table 1: Document reading performance"></p>
+<p><img src="./super_RAG_table1.png" alt="Table 1: Document reading performance" loading="lazy"></p>
 <p>Table 1 は「文書を読み取る能力（Document Reading）」の評価。SuperRAG で文書グラフを作る前段として、PDF/画像からテキスト・図・表・位置・キャプションを正確に抽出できるかを測る。</p>
 <ul>
 <li>指標: NID / TEDS / TEDS-S（レイアウトと表構造の再現性を評価）</li>
@@ -198,7 +237,7 @@
 </ul>
 <p>つまり Our Reader は Textract級の構造復元力を持ち、後段のグラフ化・retrieval の土台が強い。</p>
 <h3>Table 2: QA Task Performance</h3>
-<p><img src="./super_RAG_table2.png" alt="Table 2: QA Performance"></p>
+<p><img src="./super_RAG_table2.png" alt="Table 2: QA Performance" loading="lazy"></p>
 <p>技術資料・論文の QA で：</p>
 <ul>
 <li>Standard RAG: EM 30〜40%, F1 45〜55%</li>
@@ -206,7 +245,7 @@
 F1 が +10〜+15 ポイント改善。図・表・段組みを含む文書理解に強いことがわかる。</li>
 </ul>
 <h3>Table 3: Multimodal Integration Task</h3>
-<p><img src="./super_RAG_table3.png" alt="Table 3: Multimodal Reasoning Result"></p>
+<p><img src="./super_RAG_table3.png" alt="Table 3: Multimodal Reasoning Result" loading="lazy"></p>
 <p>図と本文、表と本文を統合して答える複合 QA の性能評価。</p>
 <ul>
 <li>テキストのみモデル比で 30〜50% の相対改善</li>
@@ -271,20 +310,6 @@ ACL Anthology version: https://aclanthology.org/2025.naacl-industry.45.pdf</p>
             
                 
             
-                
-            
-                
-            
-                
-            
-                
-            
-                
-            
-                
-            
-                
-            
             <div class="article-nav-links">
                 
                 
@@ -306,6 +331,7 @@ ACL Anthology version: https://aclanthology.org/2025.naacl-industry.45.pdf</p>
         </div>
     </footer>
 
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
     <script src="/js/main.js"></script>
     
 </body>

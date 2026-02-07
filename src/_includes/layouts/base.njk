@@ -34,9 +34,57 @@
         <meta name="twitter:image" content="{{ resolvedOgImage }}">
     {% endif %}
     <meta name="search-index" content="{{ (site.baseUrl or '/') ~ 'search-index.json' }}">
+
+    {# JSON-LD 構造化データ #}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "{% if page.url and page.url.indexOf('/articles/') == 0 %}Article{% else %}WebSite{% endif %}",
+        {% if page.url and page.url.indexOf('/articles/') == 0 %}
+        "headline": "{{ title }}",
+        "datePublished": "{{ date | fmtDateISO }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ site.author }}",
+            "url": "{{ site.url }}"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "{{ site.author }}"
+        },
+        "description": "{{ pageDescription }}",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{{ canonicalUrl }}"
+        }
+        {% else %}
+        "name": "{{ site.title }}",
+        "description": "{{ site.description }}",
+        "url": "{{ site.url }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ site.author }}",
+            "jobTitle": "R&D Engineer",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "企業 R&D"
+            },
+            "sameAs": [
+                "https://researchmap.jp/masatoizumi",
+                "https://orcid.org/0000-0002-8450-9028"
+            ]
+        }
+        {% endif %}
+    }
+    </script>
+
     <link rel="stylesheet" href="/css/style.css">
+
+    {# リソースヒント #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     {% block head %}{% endblock %}
 </head>
@@ -44,7 +92,7 @@
     <header class="header">
         <div class="header-inner">
             <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
-            <nav class="nav">
+            <nav class="nav" id="nav">
                 <ul class="nav-list">
                     {% for item in nav %}
                         {% set isActive = page.url == item.url %}
@@ -57,7 +105,10 @@
                     {% endfor %}
                 </ul>
             </nav>
-            <button class="menu-toggle" aria-label="メニューを開く">
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
                 <span class="menu-icon"></span>
             </button>
         </div>
@@ -74,6 +125,7 @@
         </div>
     </footer>
 
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
     <script src="/js/main.js"></script>
     {% block scripts %}{% endblock %}
 </body>
