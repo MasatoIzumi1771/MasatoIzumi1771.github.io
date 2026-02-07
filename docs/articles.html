@@ -30,9 +30,40 @@
         <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
     
     <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        
+        "name": "Masato Izumi Portfolio",
+        "description": "泉諒音の研究・スキル・記事をまとめたポートフォリオサイト",
+        "url": "https://masatoizumi1771.github.io",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "jobTitle": "R&D Engineer",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "企業 R&D"
+            },
+            "sameAs": [
+                "https://researchmap.jp/masatoizumi",
+                "https://orcid.org/0000-0002-8450-9028"
+            ]
+        }
+        
+    }
+    </script>
+
     <link rel="stylesheet" href="/css/style.css">
+
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
 </head>
@@ -40,7 +71,7 @@
     <header class="header">
         <div class="header-inner">
             <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
-            <nav class="nav">
+            <nav class="nav" id="nav">
                 <ul class="nav-list">
                     
                         
@@ -87,7 +118,10 @@
                     
                 </ul>
             </nav>
-            <button class="menu-toggle" aria-label="メニューを開く">
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
                 <span class="menu-icon"></span>
             </button>
         </div>
@@ -104,27 +138,6 @@
                     <p class="article-card-date">2025.12.10</p>
                     <p class="article-card-description">文書のレイアウト構造ごと理解する「SuperRAG」の仕組みと性能を、図表付きで解説します。</p>
                     <a href="/articles/superRAG/" class="read-more">続きを読む &gt;</a>
-                </div>
-            
-                <div class="article-card">
-                    <h3 class="article-card-title"><a href="/articles/renewal2/renewal2.html">2回目のリニューアル</a></h3>
-                    <p class="article-card-date">2025.12.03</p>
-                    <p class="article-card-description">検索追加、UIの小改修、運用改善をまとめたゆるい振り返り。</p>
-                    <a href="/articles/renewal2/renewal2.html" class="read-more">続きを読む &gt;</a>
-                </div>
-            
-                <div class="article-card">
-                    <h3 class="article-card-title"><a href="false">サンプル記事（Markdown）</a></h3>
-                    <p class="article-card-date">2025.10.01</p>
-                    <p class="article-card-description">サンプルのMarkdown記事です。これをベースに書き換えてください。</p>
-                    <a href="false" class="read-more">続きを読む &gt;</a>
-                </div>
-            
-                <div class="article-card">
-                    <h3 class="article-card-title"><a href="false">サンプル記事（Markdown）</a></h3>
-                    <p class="article-card-date">2025.10.01</p>
-                    <p class="article-card-description">サンプルのMarkdown記事です。これをベースに書き換えてください。</p>
-                    <a href="false" class="read-more">続きを読む &gt;</a>
                 </div>
             
                 <div class="article-card">
@@ -170,34 +183,6 @@
                 </div>
             
                 <div class="article-card">
-                    <h3 class="article-card-title"><a href="/articles/about_this_hp/about_this_hp.html">研究記事: このHPについて</a></h3>
-                    <p class="article-card-date">2025.05.21</p>
-                    <p class="article-card-description">本ホームページの目的や構成、今後の更新方針について。</p>
-                    <a href="/articles/about_this_hp/about_this_hp.html" class="read-more">続きを読む &gt;</a>
-                </div>
-            
-                <div class="article-card">
-                    <h3 class="article-card-title"><a href="/articles/renewal/renewal.html">リニューアルのポイント</a></h3>
-                    <p class="article-card-date">2025.05.21</p>
-                    <p class="article-card-description">ポートフォリオサイトをリニューアルしたポイントのまとめ。</p>
-                    <a href="/articles/renewal/renewal.html" class="read-more">続きを読む &gt;</a>
-                </div>
-            
-                <div class="article-card">
-                    <h3 class="article-card-title"><a href="false">記事タイトルをここに書く</a></h3>
-                    <p class="article-card-date">2025.MM.DD</p>
-                    <p class="article-card-description">記事の概要を一文で書きます（例：◯◯の技術メモ）。</p>
-                    <a href="false" class="read-more">続きを読む &gt;</a>
-                </div>
-            
-                <div class="article-card">
-                    <h3 class="article-card-title"><a href="false">記事タイトルをここに書く</a></h3>
-                    <p class="article-card-date">2025.MM.DD</p>
-                    <p class="article-card-description">記事の概要を一文で書きます（例：◯◯の技術メモ）。</p>
-                    <a href="false" class="read-more">続きを読む &gt;</a>
-                </div>
-            
-                <div class="article-card">
                     <h3 class="article-card-title"><a href="/articles/coming_of_age/coming_of_age.html">成人式の思い出と活動について</a></h3>
                     <p class="article-card-date">2021.01.10</p>
                     <p class="article-card-description">成人式での活動や当時の思い出をまとめた記事。</p>
@@ -217,6 +202,7 @@
         </div>
     </footer>
 
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
     <script src="/js/main.js"></script>
     
 </body>

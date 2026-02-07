@@ -1,0 +1,78 @@
+---
+layout: layouts/article.njk
+title: 記事タイトルをここに入力
+date: 2025-01-01
+displayDate: 2025.01.01
+permalink: false
+# ↑ 新規記事作成時は以下のように変更：
+# permalink: articles/記事のURL/index.html
+tags:
+  - タグ1
+  - タグ2
+# ↑ 新規記事作成時は以下を追加：
+# tags:
+#   - articles  ← これを追加すると記事一覧に表示される
+#   - タグ1
+#   - タグ2
+description: 記事の説明文をここに入力（検索結果やカード表示に使用されます）
+update: 記事タイトル を追加しました。
+# useMath: true  # 数式を使う場合はコメントを外す
+---
+
+<p>
+    ここに記事の導入文を書きます。この記事では〇〇について解説します。
+</p>
+
+<h3>セクション1のタイトル</h3>
+<p>
+    セクション1の内容をここに書きます。
+</p>
+
+<h3>セクション2のタイトル</h3>
+<p>
+    セクション2の内容をここに書きます。
+</p>
+
+<h4>サブセクション</h4>
+<p>
+    h4タグを使うと、目次でインデントされて表示されます。
+</p>
+
+<h3>コードの書き方</h3>
+<pre><code>// コードブロックの例
+function example() {
+    console.log("Hello, World!");
+}
+</code></pre>
+
+<h3>リストの書き方</h3>
+<ul>
+    <li>リスト項目1</li>
+    <li>リスト項目2</li>
+    <li>リスト項目3</li>
+</ul>
+
+<h3>まとめ</h3>
+<p>
+    記事のまとめをここに書きます。
+</p>
+
+<!--
+使い方：
+1. このファイルをコピーして新しいフォルダを作成
+   例: src/articles/my-new-article/my-new-article.html
+
+2. フロントマター（---で囲まれた部分）を編集
+   - title: 記事タイトル
+   - date: 公開日（YYYY-MM-DD形式）
+   - displayDate: 表示用日付（YYYY.MM.DD形式）
+   - permalink: 記事のURL
+   - tags: タグ（articlesは必須）
+   - description: 記事の説明
+   - update: 更新履歴に表示されるテキスト
+
+3. eleventyExcludeFromCollections: true を削除（または false に変更）
+   → これで記事一覧に表示されるようになります
+
+4. 記事本文を編集
+-->

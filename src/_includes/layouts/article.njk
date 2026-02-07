@@ -2,9 +2,11 @@
 layout: layouts/base.njk
 ---
 {% block head %}
+    {% if useMath %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    {% endif %}
 {% endblock %}
 
 <section class="article-detail section">
@@ -17,7 +19,10 @@ layout: layouts/base.njk
             <span class="breadcrumb-current">{{ title }}</span>
         </nav>
         <h2 class="article-title">{{ title }}</h2>
-        {% if date %}<p class="article-meta">公開日: {{ displayDate or date }}</p>{% endif %}
+        <div class="article-meta-info">
+            {% if date %}<p class="article-meta">公開日: {{ displayDate or date }}</p>{% endif %}
+            <p class="reading-time" id="reading-time"></p>
+        </div>
         {% if tags %}
             {% set displayTags = tags | reject('equalto', 'articles') %}
             {% if displayTags | length %}
@@ -28,6 +33,10 @@ layout: layouts/base.njk
                 </ul>
             {% endif %}
         {% endif %}
+        <nav class="toc" id="toc" aria-label="目次">
+            <h3 class="toc-title">目次</h3>
+            <ul class="toc-list" id="toc-list"></ul>
+        </nav>
         <div class="article-body">
             {{ content | safe }}
         </div>

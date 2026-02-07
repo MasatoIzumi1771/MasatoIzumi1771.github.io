@@ -30,9 +30,40 @@
         <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
     
     <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        
+        "headline": "LightRAGとHNSWの技術解説メモ",
+        "datePublished": "2025-08-13",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "url": "https://masatoizumi1771.github.io"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Masato Izumi"
+        },
+        "description": "LightRAGとHNSWの仕組みとアーキテクチャを解説したメモ。",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://masatoizumi1771.github.io/articles/LightRAG/LightRAG.html"
+        }
+        
+    }
+    </script>
+
     <link rel="stylesheet" href="/css/style.css">
+
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
 </head>
@@ -40,7 +71,7 @@
     <header class="header">
         <div class="header-inner">
             <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
-            <nav class="nav">
+            <nav class="nav" id="nav">
                 <ul class="nav-list">
                     
                         
@@ -89,7 +120,10 @@
                     
                 </ul>
             </nav>
-            <button class="menu-toggle" aria-label="メニューを開く">
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
                 <span class="menu-icon"></span>
             </button>
         </div>
@@ -97,9 +131,7 @@
 
     <main class="main-content">
         
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
 
 
 <section class="article-detail section">
@@ -112,7 +144,10 @@
             <span class="breadcrumb-current">LightRAGとHNSWの技術解説メモ</span>
         </nav>
         <h2 class="article-title">LightRAGとHNSWの技術解説メモ</h2>
-        <p class="article-meta">公開日: 2025.08.13</p>
+        <div class="article-meta-info">
+            <p class="article-meta">公開日: 2025.08.13</p>
+            <p class="reading-time" id="reading-time"></p>
+        </div>
         
             
             
@@ -125,6 +160,10 @@
                 </ul>
             
         
+        <nav class="toc" id="toc" aria-label="目次">
+            <h3 class="toc-title">目次</h3>
+            <ul class="toc-list" id="toc-list"></ul>
+        </nav>
         <div class="article-body">
             <p>
                         このメモは、次世代RAGフレームワーク「LightRAG」と、その中核をなす高速ベクトル検索技術「HNSW」の仕組みについて、個人的にまとめたものです。
@@ -148,7 +187,7 @@
                     <p>
                         LightRAGは、役割の異なる2つの主要なデータストア（頭脳）を連携させて動作します。以下の図は、その全体構造を示しています。
                     </p>
-                    <img src="lightrag-architecture.png" alt="LightRAGのアーキテクチャ図">
+                    <img src="lightrag-architecture.png" alt="LightRAGのアーキテクチャ図" loading="lazy">
                     <p style="text-align: center; font-size: 0.85em; color: #777; margin-top: 5px;">図1: LightRAGの構造</p>
                     <ul>
                         <li><strong>ナレッジグラフ・ストア (Knowledge Graph Store)</strong><br>
@@ -192,7 +231,7 @@
                     <p>
                         HNSWの最大の特徴は、その巧妙な階層化の仕組みです。以下の図は、その階層構造を模式的に示しています。
                     </p>
-                    <img src="hnsw-structure.png" alt="HNSWの階層構造図">
+                    <img src="hnsw-structure.png" alt="HNSWの階層構造図" loading="lazy">
                     <p style="text-align: center; font-size: 0.85em; color: #777; margin-top: 5px;">図2: HNSWの階層構造</p>
                     <ul>
                         <li><strong>階層決定は完全にランダム:</strong><br>
@@ -256,22 +295,8 @@
                 
             
                 
-            
-                
-            
-                
-            
-                
                     
                     
-                
-            
-                
-            
-                
-            
-                
-            
                 
             
                 
@@ -303,6 +328,7 @@
         </div>
     </footer>
 
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
     <script src="/js/main.js"></script>
     
 </body>

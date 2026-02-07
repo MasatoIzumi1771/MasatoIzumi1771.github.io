@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://masatoizumi1771.github.io/</loc>
+        <lastmod>2025-12-10</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles.html</loc>
+        <lastmod>2025-12-10</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://masatoizumi1771.github.io/research.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://masatoizumi1771.github.io/research_achievements.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://masatoizumi1771.github.io/skills.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://masatoizumi1771.github.io/search.html</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles/superRAG/</loc>
+        <lastmod>2025-12-10</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles/commands/</loc>
+        <lastmod>2025-09-30</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles/bge-m3/bge-m3.html</loc>
+        <lastmod>2025-09-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles/LightRAG/LightRAG.html</loc>
+        <lastmod>2025-08-13</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles/transformer-positional/transformer-positional.html</loc>
+        <lastmod>2025-08-13</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles/Gitlab-ssh-error/Gitlab-ssh-error.html</loc>
+        <lastmod>2025-05-29</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles/docler-poetry/docker-poetry.html</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://masatoizumi1771.github.io/articles/coming_of_age/coming_of_age.html</loc>
+        <lastmod>2021-01-10</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+</urlset>

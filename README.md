@@ -2,118 +2,100 @@
 
 このリポジトリは静的サイトジェネレーター **Eleventy**（11ty）で構築するポートフォリオサイトです。`src/` にソースを置き、`docs/` にビルド成果物を出力します。GitHub Pages の公開先を `docs/` に設定してください。
 
+## 主な機能
+
+- **ダークモード**: ヘッダーの🌙ボタンで切り替え、設定はブラウザに保存
+- **目次自動生成**: 記事ページでh3/h4見出しから自動生成
+- **読了時間表示**: 記事の文字数から自動計算
+- **コードコピーボタン**: コードブロックにホバーでコピーボタン表示
+- **スムーズスクロール**: ページ内リンクがアニメーション付きでスクロール
+- **トップへ戻るボタン**: スクロール時に右下に固定表示
+- **フェードインアニメーション**: スクロール時に要素がフェードイン
+- **SEO対応**: JSON-LD構造化データ、サイトマップ自動生成、OGP対応
+- **KaTeX数式対応**: 記事ごとに有効/無効を切り替え可能
+- **全文検索**: Lunr.jsによるクライアントサイド検索
+
 ## 前提
-- Node.js 18 以上（npm が無い場合はインストールしてください）
-- 依存: `@11ty/eleventy`, `prettier`, `stylelint`
+- Node.js 18 以上
+- 依存: `@11ty/eleventy`, `prettier`, `stylelint`, `clean-css-cli`, `terser`
 
 ## セットアップ
 ```bash
 npm install
 ```
 
-## ローカルプレビュー
+## コマンド一覧
 ```bash
-npm run dev
-```
-- `http://localhost:8080` で確認できます。
-- `src/css` / `src/js` / `src/images` も監視します。
-
-## ビルド
-```bash
-npm run build
-```
-- `docs/` に静的ファイルを生成します。
-- GitHub Pages は `docs/` を公開対象に設定してください。
-
-## フォーマット / Lint
-```bash
-npm run format   # Prettier
-npm run lint:css # Stylelint
+npm run dev       # ローカル開発（localhost:8080、ホットリロード）
+npm run build     # 本番ビルド（CSS/JS最小化含む）
+npm run build:dev # ビルドのみ（最小化なし）
+npm run format    # Prettierでフォーマット
+npm run lint:css  # Stylelintでチェック
 ```
 
 ## ディレクトリ構成
 ```
 src/
   _data/            # サイト共通データ
-    articles.js     # 記事メタデータ（タイトル・日付・URL・説明）
+    site.json       # サイト設定（タイトル、URL、著者）
     nav.json        # ナビゲーション定義
-    updates.js      # 更新履歴
   _includes/layouts/
-    base.njk        # 全ページ共通レイアウト（ヘッダー/フッター）
-    article.njk     # 記事ページ用レイアウト（KaTeX対応）
+    base.njk        # 全ページ共通レイアウト
+    article.njk     # 記事ページ用レイアウト
   articles/         # 記事本文・画像
+    _template/      # 新規記事用テンプレート（ビルド対象外）
   css/ , js/ , images/
-  *.njk             # 各ページ本体（index.njk など）
+  *.njk             # 各ページ本体
+docs/               # ビルド出力（GitHub Pages公開用）
 ```
 
 ## 新しい記事を追加する
-### 共通（HTML/Markdown 共通）
-1. 記事用フォルダを作成します（例: `src/articles/my-article/`）。
-2. 画像は同じフォルダに保存し、相対パスで参照します（例: `./image.png`）。
-3. 以下の項目をフロントマターに必ず記載します（HTMLでもMarkdownでも同じ）:
-   - `layout: layouts/article.njk`
-   - `title`: 記事タイトル
-   - `date`: `YYYY-MM-DD`
-   - `displayDate`: `YYYY.MM.DD`（表示用）
-   - `permalink`: 公開したいURL（例: `articles/my-article/index.html`）
-   - `tags`: 少なくとも `articles` を含める（例: `- articles`）
-   - `description`: 記事の要約
-   - `update`: 更新履歴に表示する文面（例: `〇〇の記事を追加しました。`）
 
-### Markdown で追加する場合（推奨）
-1. フォルダ直下に `index.md` を作成し、フロントマターを書く：
-   ```md
+### テンプレートを使う方法（推奨）
+1. `src/articles/_template/` フォルダをコピー
+2. フォルダ名を記事URLに合わせて変更（例: `my-new-article`）
+3. ファイル名も変更（例: `my-new-article.html`）
+4. フロントマターを編集：
+   ```yaml
    ---
    layout: layouts/article.njk
-   title: 新しい記事タイトル
-   date: 2025-10-01
-   displayDate: 2025.10.01
-   permalink: articles/my-article/index.html
+   title: 記事タイトル
+   date: 2025-01-01
+   displayDate: 2025.01.01
+   permalink: articles/my-new-article/index.html  # falseから変更
    tags:
-     - articles
-     - カテゴリ例
-   description: 記事の要約を書く
-   update: 新しい記事を追加しました。
+     - articles    # これを追加すると記事一覧に表示
+     - カテゴリ名
+   description: 記事の要約
+   update: 〇〇の記事を追加しました。
+   # useMath: true  # 数式を使う場合はコメントを外す
    ---
-   # 見出し
-   本文をMarkdownで記述します。
-
-   ```bash
-   echo "コードブロックもOK"
    ```
-   ```
-2. 画像を同じフォルダに置き、`![alt](./image.png)` のように参照します。
-3. `npm run build` で `docs/` に生成し、表示を確認します。
+5. 記事本文を編集
+6. `npm run build` でビルド
 
-### HTML で追加する場合
-1. フォルダ直下に `index.html` を作成し、フロントマターを書く：
-   ```html
-   ---
-   layout: layouts/article.njk
-   title: 新しい記事タイトル
-   date: 2025-10-01
-   displayDate: 2025.10.01
-   permalink: articles/my-article/index.html
-   tags:
-     - articles
-     - カテゴリ例
-   description: 記事の要約を書く
-   update: 新しい記事を追加しました。
-   ---
-   <h2>見出し</h2>
-   <p>本文をHTMLで記述します。</p>
-   <pre><code class="language-bash">echo "コードもOK"</code></pre>
-   <img src="./image.png" alt="説明">
-   ```
-2. 画像は同じフォルダに置き、`./image.png` で参照します。
-3. `npm run build` で `docs/` を生成し、表示を確認します。
+### フロントマターの項目
 
-### 更新履歴・一覧への反映
-- 記事に `tags: [articles, ...]` を付け、フロントマターを正しく書けば、トップページの「更新履歴」「最新記事」、記事一覧に自動反映されます。
-- `update` フィールドの文面がそのまま更新履歴に出ます。
+| 項目 | 必須 | 説明 |
+|------|------|------|
+| `layout` | ○ | `layouts/article.njk` |
+| `title` | ○ | 記事タイトル |
+| `date` | ○ | 公開日（YYYY-MM-DD） |
+| `displayDate` | ○ | 表示用日付（YYYY.MM.DD） |
+| `permalink` | ○ | 公開URL |
+| `tags` | ○ | `articles`を含めると記事一覧に表示 |
+| `description` | ○ | 記事の要約（検索・カード表示用） |
+| `update` | △ | 更新履歴に表示するテキスト |
+| `useMath` | - | `true`でKaTeX数式を有効化 |
+
+### 画像の追加
+- 記事と同じフォルダに画像を配置
+- HTML: `<img src="./image.png" alt="説明">`
+- Markdown: `![説明](./image.png)`
+- 自動的にlazy loadingが適用されます
 
 ## 新しいページを追加する
-1. `src/` に `newpage.njk` を追加し、以下のようにフロントマターを記述します。
+1. `src/` に `newpage.njk` を作成
    ```njk
    ---
    layout: layouts/base.njk
@@ -123,13 +105,32 @@ src/
    ---
    <section class="section">ページの中身</section>
    ```
-2. ナビゲーションに載せたい場合は `src/_data/nav.json` に `{"label": "名前", "url": "/newpage.html"}` を追加します。
+2. ナビに追加する場合は `src/_data/nav.json` を編集
 
-## デプロイ（例）
-1. `npm run build`
-2. `docs/` をコミットして `main` ブランチに push
-3. GitHub Pages の設定で `Build from a GitHub Actions workflow` もしくは `Deploy from a branch: /docs` を選択
+## デプロイ
+```bash
+npm run build
+git add .
+git commit -m "Update site"
+git push
+```
+GitHub Pages設定で `docs/` を公開対象に設定してください。
 
-## 既知の改善ポイント
-- 依存インストール用に Node.js が必要です（現在ローカルに npm が無い場合は先にインストールしてください）。
-- `docs/` はビルド後に生成されるため、必要に応じてコミットしてください。
+## カスタマイズ
+
+### ダークモードの色を変更
+`src/css/style.css` の `:root` と `[data-theme="dark"]` のCSS変数を編集
+
+### サイト情報を変更
+`src/_data/site.json` を編集：
+```json
+{
+  "title": "サイトタイトル",
+  "description": "サイトの説明",
+  "author": "著者名",
+  "url": "https://example.github.io"
+}
+```
+
+### ナビゲーションを変更
+`src/_data/nav.json` を編集

@@ -4,14 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "eleventy --input=src --output=docs --serve --port=8080",
-    "build": "eleventy --input=src --output=docs",
+    "build": "eleventy --input=src --output=docs && npm run minify",
+    "build:dev": "eleventy --input=src --output=docs",
+    "minify": "npm run minify:css && npm run minify:js",
+    "minify:css": "cleancss -o docs/css/style.css docs/css/style.css",
+    "minify:js": "terser docs/js/main.js -o docs/js/main.js -c -m && terser docs/js/search.js -o docs/js/search.js -c -m",
     "lint:css": "stylelint \"src/css/**/*.css\"",
     "format": "prettier --write \"src/**/*.{njk,md,html,css,js,json}\""
   },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
+    "luxon": "^3.5.0",
+    "clean-css-cli": "^5.6.3",
     "prettier": "^3.3.3",
     "stylelint": "^16.9.0",
-    "stylelint-config-standard": "^36.0.0"
+    "stylelint-config-standard": "^36.0.0",
+    "terser": "^5.31.0"
   }
 }

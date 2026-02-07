@@ -30,9 +30,40 @@
         <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
     
     <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        
+        "headline": "成人式の思い出と活動について",
+        "datePublished": "2021-01-10",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "url": "https://masatoizumi1771.github.io"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Masato Izumi"
+        },
+        "description": "成人式での活動や当時の思い出をまとめた記事。",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://masatoizumi1771.github.io/articles/coming_of_age/coming_of_age.html"
+        }
+        
+    }
+    </script>
+
     <link rel="stylesheet" href="/css/style.css">
+
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     
 </head>
@@ -40,7 +71,7 @@
     <header class="header">
         <div class="header-inner">
             <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
-            <nav class="nav">
+            <nav class="nav" id="nav">
                 <ul class="nav-list">
                     
                         
@@ -89,7 +120,10 @@
                     
                 </ul>
             </nav>
-            <button class="menu-toggle" aria-label="メニューを開く">
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
                 <span class="menu-icon"></span>
             </button>
         </div>
@@ -97,9 +131,7 @@
 
     <main class="main-content">
         
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
 
 
 <section class="article-detail section">
@@ -112,7 +144,10 @@
             <span class="breadcrumb-current">成人式の思い出と活動について</span>
         </nav>
         <h2 class="article-title">成人式の思い出と活動について</h2>
-        <p class="article-meta">公開日: 2021.01.10</p>
+        <div class="article-meta-info">
+            <p class="article-meta">公開日: 2021.01.10</p>
+            <p class="reading-time" id="reading-time"></p>
+        </div>
         
             
             
@@ -123,6 +158,10 @@
                 </ul>
             
         
+        <nav class="toc" id="toc" aria-label="目次">
+            <h3 class="toc-title">目次</h3>
+            <ul class="toc-list" id="toc-list"></ul>
+        </nav>
         <div class="article-body">
             <p>
                         2021年、新型コロナウイルスの影響で、私が住む越谷市では成人式が中止となってしまいました。
@@ -154,29 +193,15 @@
                         以下に、当時の活動の様子を伝えるメディア掲載の画像や映像を掲載します。
                     </p>
                     <div class="image-gallery">
-                        <img src="seizin_yo.png" alt="東部読売新聞への掲載1">
-                        <img src="seizinyo2.png" alt="東部読売新聞への掲載2">
-                        <img src="seizin_nhk2.png" alt="NHKでの放送1">
-                        <img src="seizin_nhk.png" alt="NHKでの放送2">
+                        <img src="seizin_yo.png" alt="東部読売新聞への掲載1" loading="lazy">
+                        <img src="seizinyo2.png" alt="東部読売新聞への掲載2" loading="lazy">
+                        <img src="seizin_nhk2.png" alt="NHKでの放送1" loading="lazy">
+                        <img src="seizin_nhk.png" alt="NHKでの放送2" loading="lazy">
 
         </div>
         
             
             
-            
-                
-            
-                
-            
-                
-            
-                
-            
-                
-            
-                
-            
-                
             
                 
             
@@ -218,6 +243,7 @@
         </div>
     </footer>
 
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
     <script src="/js/main.js"></script>
     
 </body>

@@ -1,6 +1,13 @@
 const { DateTime } = require('luxon');
 
 module.exports = function (eleventyConfig) {
+    // Markdown画像にlazy loadingを追加
+    eleventyConfig.addTransform('lazyImages', (content, outputPath) => {
+        if (outputPath && outputPath.endsWith('.html')) {
+            return content.replace(/<img(?!.*loading=)([^>]*)>/gi, '<img$1 loading="lazy">');
+        }
+        return content;
+    });
     eleventyConfig.addPassthroughCopy({ 'src/css': 'css' });
     eleventyConfig.addPassthroughCopy({ 'src/js': 'js' });
     eleventyConfig.addPassthroughCopy({ 'src/images': 'images' });
@@ -18,6 +25,13 @@ module.exports = function (eleventyConfig) {
             return DateTime.fromJSDate(dateObj).toFormat('yyyy.MM.dd');
         } catch (e) {
             return '';
+        }
+    });
+    eleventyConfig.addFilter('fmtDateISO', (dateObj) => {
+        try {
+            return DateTime.fromJSDate(dateObj).toISODate();
+        } catch (e) {
+            return new Date().toISOString().split('T')[0];
         }
     });
     eleventyConfig.addFilter('striptags', (value = '') => value.toString().replace(/<[^>]*>?/gm, ''));
