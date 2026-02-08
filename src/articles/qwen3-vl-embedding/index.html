@@ -1,0 +1,547 @@
+---
+layout: layouts/article.njk
+title: Qwen3-VL-Embedding 技術詳細
+date: 2026-02-08
+displayDate: 2026.02.08
+permalink: articles/qwen3-vl-embedding/index.html
+tags:
+  - articles
+  - Transformer
+  - 機械学習
+  - Embedding
+  - マルチモーダル
+description: Qwen3-VL-Embeddingの特徴的技術（DeepStack、Interleaved-MRoPE、MRL、Multi-stage Training）を数式レベルで解説します。
+update: Qwen3-VL-Embedding技術詳細記事を追加しました。
+useMath: true
+---
+
+<p>
+    本記事では、Qwen3-VL-Embeddingの特徴的技術を数式レベルで解説します。ViTの基礎知識を前提としています。
+</p>
+
+<h3>技術サマリー</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>技術</th>
+            <th>概要</th>
+            <th>効果</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>DeepStack</strong></td>
+            <td>ViTの複数層からDecoder各層へ特徴を融合</td>
+            <td>OCR・細部認識が大幅改善（DocVQA +6.7pt）</td>
+        </tr>
+        <tr>
+            <td><strong>Interleaved-MRoPE</strong></td>
+            <td>3軸（時間・高さ・幅）の位置を交互配置でエンコード</td>
+            <td>1Mトークン検索精度 &gt;99.5%</td>
+        </tr>
+        <tr>
+            <td><strong>MRL</strong></td>
+            <td>複数次元で同時に損失計算し、任意次元で切り取り可能に</td>
+            <td>64次元でも85%の性能を維持</td>
+        </tr>
+        <tr>
+            <td><strong>Multi-stage Training</strong></td>
+            <td>弱教師 → 強教師 → SLERPマージの3段階学習</td>
+            <td>汎化と特化のバランス調整</td>
+        </tr>
+        <tr>
+            <td><strong>EOS Pooling</strong></td>
+            <td>Causal Attentionで末尾トークンに情報集約</td>
+            <td>可変長入力から固定長Embeddingを生成</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>モデル概要</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>項目</th>
+            <th>2B</th>
+            <th>8B</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>ベースモデル</td><td>Qwen3-VL-2B-Instruct</td><td>Qwen3-VL-8B-Instruct</td></tr>
+        <tr><td>Transformer層</td><td>28層</td><td>36層</td></tr>
+        <tr><td>Hidden次元 $d$</td><td>2048</td><td>4096</td></tr>
+        <tr><td>Attention Head</td><td>16</td><td>32</td></tr>
+        <tr><td>Head次元 $d_h$</td><td>128</td><td>128</td></tr>
+        <tr><td>コンテキスト長</td><td>32K tokens</td><td>32K tokens</td></tr>
+        <tr><td>MRL対応次元</td><td>64, 128, 256, 512, 1024, 2048</td><td>64〜4096</td></tr>
+    </tbody>
+</table>
+
+<h3>全体アーキテクチャ</h3>
+
+<pre><code>入力 → 入力処理 → Interleaved-MRoPE → Transformer (DeepStack) → EOS抽出 → L2 Norm → Embedding
+
+詳細:
+  テキスト → Embedding Layer      → (seq, seq, seq)
+  画像     → ViT + DeepStack      → (0, row, col)
+  動画     → フレーム → ViT + DeepStack → (frame, row, col)
+                ↓
+          Transformer + DeepStack Fusion
+                ↓
+          EOS hidden state → L2 Norm → Embedding Vector</code></pre>
+
+<h3>DeepStack</h3>
+
+<h4>解決する問題</h4>
+
+<p>
+    従来のVLMは、ViTの<strong>最終層出力のみ</strong>をDecoder（言語モデル部分）に渡します。
+</p>
+
+<pre><code>【従来のViT統合】
+ViT Layer 1  → (低レベル特徴: エッジ、テクスチャ)
+    ↓
+ViT Layer 12 → (中レベル特徴: パーツ、パターン)
+    ↓
+ViT Layer 24 → (高レベル特徴: 物体、意味) ─→ Decoderへ
+                                        ↑ここだけ使用
+
+問題:
+  - 低レベル特徴（文字の輪郭、線の太さ）が最終層で失われる
+  - OCR、細かい空間関係の理解が困難</code></pre>
+
+<h4>DeepStackの解決策</h4>
+
+<p>
+    ViTの<strong>複数層</strong>から特徴を抽出し、LMM Decoderの<strong>異なる層</strong>に融合します。
+</p>
+
+<pre><code>【DeepStack】
+ViT Encoder                        LMM Decoder
+   ├─ 浅い層 ────────────────────→ Decoder 初期層へ融合
+   ├─ 中間層 ────────────────────→ Decoder 中間層へ融合
+   └─ 深い層 ────────────────────→ Decoder 後期層へ融合</code></pre>
+
+<h4>数式表現</h4>
+
+<p>
+    ViTの各層出力を $V^{(l)}$ とします（$l = 1, ..., L_{\text{vit}}$）。
+</p>
+
+<p><strong>従来手法:</strong></p>
+$$
+H^{(0)}_{\text{visual}} = \text{Proj}(V^{(L_{\text{vit}})})
+$$
+<p>最終層のみをDecoderの入力層に渡します。</p>
+
+<p><strong>DeepStack:</strong></p>
+$$
+H^{(k)}_{\text{Dec}} = H^{(k)}_{\text{Dec}} + \text{Proj}_k(V^{(\phi(k))})
+$$
+
+<p>ここで:</p>
+<ul>
+    <li>$\phi(k)$: Decoder層 $k$ に対応するViT層のインデックス</li>
+    <li>$\text{Proj}_k$: 層ごとの線形投影</li>
+</ul>
+
+<h4>具体的なマッピング（推定）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>ViT層</th>
+            <th>捉える特徴</th>
+            <th>融合先Decoder層</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>1〜8</td><td>エッジ、テクスチャ、色</td><td>1〜10</td></tr>
+        <tr><td>9〜16</td><td>パーツ、局所パターン</td><td>11〜20</td></tr>
+        <tr><td>17〜24</td><td>物体、シーン、意味</td><td>21〜28 (or 36)</td></tr>
+    </tbody>
+</table>
+
+<h4>効果（アブレーション）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>構成</th>
+            <th>TextVQA</th>
+            <th>DocVQA</th>
+            <th>ChartQA</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>最終層のみ</td><td>56.7</td><td>31.7</td><td>45.2</td></tr>
+        <tr><td>DeepStack</td><td><strong>60.1</strong></td><td><strong>38.4</strong></td><td><strong>52.1</strong></td></tr>
+    </tbody>
+</table>
+
+<p>特にOCR依存タスク（DocVQA: +6.7pt）で顕著な改善が見られます。</p>
+
+<h3>Interleaved-MRoPE</h3>
+
+<h4>解決する問題</h4>
+
+<p>
+    標準RoPEは<strong>1次元</strong>の位置情報のみをエンコードします。
+</p>
+
+<pre><code>【標準RoPE】
+位置 p ∈ ℤ → 回転角 θ = p × base_freq
+
+問題:
+  - 画像の2D空間構造を表現できない
+  - 動画の時間+空間の3D構造を表現できない</code></pre>
+
+<h4>MRoPEの基本概念</h4>
+
+<p>
+    Multi-dimensional RoPE（MRoPE）は、位置情報を<strong>3軸</strong>で表現します。
+</p>
+
+$$
+\text{pos} = (t, h, w)
+$$
+
+<ul>
+    <li>$t$: 時間軸（テキストではシーケンス位置、動画ではフレーム番号）</li>
+    <li>$h$: 高さ軸（行位置）</li>
+    <li>$w$: 幅軸（列位置）</li>
+</ul>
+
+<h4>モダリティ別の位置ID変換</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>モダリティ</th>
+            <th>元の次元</th>
+            <th>3軸への変換</th>
+            <th>例</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>テキスト</td><td>1D position $p$</td><td>$(p, p, p)$</td><td>位置3 → $(3, 3, 3)$</td></tr>
+        <tr><td>画像</td><td>2D $(row, col)$</td><td>$(0, row, col)$</td><td>$(1, 2)$ → $(0, 1, 2)$</td></tr>
+        <tr><td>動画</td><td>3D $(frame, row, col)$</td><td>$(frame, row, col)$</td><td>フレーム5の$(1,2)$ → $(5, 1, 2)$</td></tr>
+    </tbody>
+</table>
+
+<h4>Interleaved配置 vs Block配置</h4>
+
+<p><strong>Block配置（従来、不採用）:</strong></p>
+<pre><code>次元インデックス i を連続的に分割:
+  i ∈ [0, d_h/6)      → t軸用
+  i ∈ [d_h/6, d_h/3)  → h軸用
+  i ∈ [d_h/3, d_h/2)  → w軸用
+
+問題: 高周波成分がt軸に集中
+  - 回転角 θ_i = pos × base^(-2i/d_h) は i が小さいほど高周波
+  - t軸: 高周波のみ（近距離に敏感、遠距離に鈍感）
+  - w軸: 低周波のみ（近距離に鈍感、遠距離に敏感）</code></pre>
+
+<p><strong>Interleaved配置（採用）:</strong></p>
+<pre><code>次元インデックス i を交互に割り当て:
+  i % 3 == 0 → t軸用
+  i % 3 == 1 → h軸用
+  i % 3 == 2 → w軸用
+
+効果: 各軸に高周波〜低周波が均等配分
+  → 全軸で近距離・遠距離の両方を表現可能</code></pre>
+
+<h4>数式表現</h4>
+
+<p>
+    Head次元 $d_h = 128$、回転ペア数 $d_h/2 = 64$。
+    位置 $(t, h, w)$ に対する各ペア $i$ での回転角:
+</p>
+
+$$
+\theta_i = \begin{cases}
+t \cdot \text{base}^{-2\lfloor i/3 \rfloor \cdot 3 / d_h} & \text{if } i \mod 3 = 0 \text{ (t軸)} \\
+h \cdot \text{base}^{-2\lfloor i/3 \rfloor \cdot 3 / d_h} & \text{if } i \mod 3 = 1 \text{ (h軸)} \\
+w \cdot \text{base}^{-2\lfloor i/3 \rfloor \cdot 3 / d_h} & \text{if } i \mod 3 = 2 \text{ (w軸)}
+\end{cases}
+$$
+
+<p>ここで $\text{base} = 10000$（標準RoPEと同じ）。</p>
+
+<h4>効果</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>指標</th>
+            <th>Block配置</th>
+            <th>Interleaved配置</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>1Mトークン検索精度</td><td>&lt;50%</td><td>&gt;99.5%</td></tr>
+        <tr><td>動画ベンチマーク</td><td>ベースライン</td><td>+1〜2pt</td></tr>
+    </tbody>
+</table>
+
+<h3>MRL（Matryoshka Representation Learning）</h3>
+
+<h4>解決する問題</h4>
+
+<pre><code>【従来】
+出力次元: 4096次元（固定）
+
+問題:
+  - 軽量用途（リアルタイム検索）には過剰
+  - 次元削減すると性能が大幅劣化
+  - 用途ごとに別モデルが必要</code></pre>
+
+<h4>MRLの解決策</h4>
+
+<p>
+    <strong>1つのモデル</strong>で<strong>任意次元</strong>のEmbeddingを生成可能にします。
+</p>
+
+<pre><code>フル次元: [d₀, d₁, d₂, ..., d₂₀₄₇]
+
+先頭N次元を切り取り:
+  64次元:   [d₀, ..., d₆₃]
+  256次元:  [d₀, ..., d₂₅₅]
+  1024次元: [d₀, ..., d₁₀₂₃]
+  2048次元: [d₀, ..., d₂₀₄₇]
+
+→ 切り取っても意味のあるEmbeddingになる</code></pre>
+
+<h4>数式表現</h4>
+
+<p>
+    学習時、複数の次元で<strong>同時に損失計算</strong>します。
+</p>
+
+<p><strong>MRL損失関数:</strong></p>
+$$
+\mathcal{L}_{\text{MRL}} = \sum_{m \in \mathcal{M}} c_m \cdot \mathcal{L}_{\text{InfoNCE}}(z_{1:m})
+$$
+
+<p>ここで:</p>
+<ul>
+    <li>$\mathcal{M} = \{64, 128, 256, 512, 1024, 2048\}$: 学習する次元セット</li>
+    <li>$c_m$: 次元 $m$ の重み</li>
+    <li>$z_{1:m}$: Embeddingベクトルの先頭 $m$ 次元</li>
+</ul>
+
+<p><strong>InfoNCE損失（各次元で計算）:</strong></p>
+$$
+\mathcal{L}_{\text{InfoNCE}}(z_{1:m}) = -\log \frac{\exp(\text{sim}(q_{1:m}, d^+_{1:m}) / \tau)}{\sum_{j} \exp(\text{sim}(q_{1:m}, d^j_{1:m}) / \tau)}
+$$
+
+<h4>なぜこれで機能するか</h4>
+
+<ul>
+    <li>低次元で損失を計算するため、<strong>最も重要な情報が先頭に集約</strong>される</li>
+    <li>高次元では追加の詳細情報が格納される</li>
+    <li>結果として、次元数に応じた<strong>階層的な情報構造</strong>が形成</li>
+</ul>
+
+<h4>推論時の使用</h4>
+
+<pre><code># フル次元（最高精度）
+embedding_full = model.encode(text)  # [2048]
+
+# 低次元（高速、省メモリ）
+embedding_64 = embedding_full[:64]   # 先頭64次元を切り取り
+
+# 必ず再正規化
+embedding_64 = embedding_64 / np.linalg.norm(embedding_64)</code></pre>
+
+<p><strong>注意:</strong> 切り取り後は<strong>再度L2正規化</strong>が必要です。</p>
+
+<h4>次元別の性能（MMEB-V2, 8Bモデル）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>次元</th>
+            <th>相対性能</th>
+            <th>ストレージ</th>
+            <th>ユースケース</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>64</td><td>~85%</td><td>0.25KB</td><td>超高速粗検索</td></tr>
+        <tr><td>256</td><td>~92%</td><td>1KB</td><td>モバイル向け</td></tr>
+        <tr><td>1024</td><td>~97%</td><td>4KB</td><td>標準検索</td></tr>
+        <tr><td>4096</td><td>100%</td><td>16KB</td><td>最高精度</td></tr>
+    </tbody>
+</table>
+
+<h3>Multi-stage Training</h3>
+
+<h4>3段階学習パイプライン</h4>
+
+<pre><code>Stage 1: Weakly Supervised Pretraining
+    ↓
+Stage 2: Supervised Fine-Tuning
+    ↓
+Stage 3: Model Merging (SLERP)</code></pre>
+
+<h4>Stage 1: Weakly Supervised Pretraining</h4>
+
+<p><strong>目的:</strong> 大規模な弱教師データで<strong>基礎能力</strong>を獲得。</p>
+
+<ul>
+    <li>LLMで生成した合成ペアデータ（数百万〜数十億ペア）</li>
+    <li>多言語（100+言語）</li>
+    <li>マルチタスク（検索、分類、クラスタリング、意味的類似性）</li>
+</ul>
+
+<h4>Stage 2: Supervised Fine-Tuning</h4>
+
+<p><strong>目的:</strong> 高品質データで<strong>識別能力</strong>を向上。</p>
+
+<ul>
+    <li>人手でラベル付けされた高品質ペア</li>
+    <li><strong>Hard Negatives</strong>を含む（類似しているが正解でないサンプル）</li>
+    <li>少量（Stage 1より大幅に少ない）</li>
+</ul>
+
+<h4>Stage 3: Model Merging (SLERP)</h4>
+
+<p><strong>目的:</strong> 汎化性能と特化性能の<strong>バランス調整</strong>。</p>
+
+<p>
+    Spherical Linear Interpolation (SLERP) で2つのモデルを補間します。
+</p>
+
+$$
+\theta_{\text{merged}} = \frac{\sin((1-\alpha)\Omega)}{\sin(\Omega)} \theta_1 + \frac{\sin(\alpha \Omega)}{\sin(\Omega)} \theta_2
+$$
+
+<p>ここで $\Omega = \arccos(\theta_1 \cdot \theta_2 / (||\theta_1|| \cdot ||\theta_2||))$。</p>
+
+<pre><code>model_general: Stage 1後のモデル（広範なタスクに対応）
+model_specialized: Stage 2後のモデル（特定タスクに最適化）
+
+α = 0.3 の場合:
+  merged = slerp(0.3, model_general, model_specialized)
+  → 汎化70% + 特化30%のバランス</code></pre>
+
+<h4>なぜこの順序か</h4>
+
+<pre><code>Stage 1 のみ: 広範だが浅い理解
+  → 「なんとなく似てる」は分かるが、細かい違いを識別できない
+
+Stage 2 のみ: 深いが狭い理解（過学習リスク）
+  → 学習データに特化しすぎ、未見データに弱い
+
+Stage 1 → 2: 広範かつ深い理解
+  → 基礎を持った上で識別能力を追加
+
+Stage 3: 最終調整
+  → 汎化と特化のバランスを用途に応じて調整</code></pre>
+
+<h3>EOS Pooling</h3>
+
+<h4>解決する問題</h4>
+
+<p>
+    入力長に依存しない<strong>固定長表現</strong>が必要です。
+</p>
+
+<pre><code>【Mean Pooling】
+全トークンの平均: (h₁ + h₂ + ... + hₙ) / n
+
+問題:
+  - パディングトークンの処理が必要
+  - 重要でないトークンも等重みで含まれる</code></pre>
+
+<h4>EOSトークンによる代表ベクトル</h4>
+
+<p>
+    Causal Attention（GPT系）では、各トークンは<strong>それ以前のトークンのみ</strong>を参照できます。
+</p>
+
+<pre><code>入力: [T₁, T₂, ..., Tₙ, &lt;EOS&gt;]
+
+Attention Pattern:
+  T₁ → [T₁]
+  T₂ → [T₁, T₂]
+  ...
+  Tₙ → [T₁, T₂, ..., Tₙ]
+  EOS → [T₁, T₂, ..., Tₙ, EOS]  ← 全トークンを参照可能</code></pre>
+
+<p>
+    <strong>EOSの hidden state</strong> は、自然にシーケンス全体の情報を集約しています。
+</p>
+
+<h4>数式表現</h4>
+
+<p>最終層の hidden states $H \in \mathbb{R}^{n \times d}$ から EOS 位置を抽出:</p>
+
+$$
+h_{\text{eos}} = H[\text{seq\_len} - 1, :]
+$$
+
+<p>L2正規化:</p>
+$$
+e = \frac{h_{\text{eos}}}{||h_{\text{eos}}||_2}
+$$
+
+<h3>動画処理</h3>
+
+<h4>トークン数の計算</h4>
+
+<pre><code>1フレーム: 解像度 (H, W) → パッチ数 = (H/14) × (W/14)
+
+例: 224×224画像 → 16 × 16 = 256 パッチ
+例: 448×448画像 → 32 × 32 = 1,024 パッチ</code></pre>
+
+<h4>動画のトークン爆発</h4>
+
+<pre><code>10フレーム × 1,024パッチ = 10,240 トークン
+32フレーム × 1,024パッチ = 32,768 トークン → コンテキスト長超過
+
+対策:
+  1. フレームサンプリング: fps=1.0（1秒1フレーム）
+  2. 最大フレーム制限: max_frames=64
+  3. 解像度の動的調整: 長い動画は低解像度で処理</code></pre>
+
+<h4>時間位置のエンコード</h4>
+
+<p>Interleaved-MRoPEの $t$ 軸がフレーム番号を表現:</p>
+
+<pre><code>フレーム0: 全パッチの位置 = (0, row, col)
+フレーム1: 全パッチの位置 = (1, row, col)
+...
+フレームN: 全パッチの位置 = (N, row, col)</code></pre>
+
+<h3>まとめ</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>技術</th>
+            <th>解決する問題</th>
+            <th>解決方法</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><strong>DeepStack</strong></td><td>ViT最終層のみでは細部が失われる</td><td>複数層の特徴をDecoder各層に融合</td></tr>
+        <tr><td><strong>Interleaved-MRoPE</strong></td><td>1D RoPEでは空間/時間を表現できない</td><td>3軸を交互配置で均等に周波数配分</td></tr>
+        <tr><td><strong>MRL Loss</strong></td><td>固定次元では用途に応じた調整不可</td><td>複数次元で同時に損失計算</td></tr>
+        <tr><td><strong>Multi-stage Training</strong></td><td>汎化と特化のトレードオフ</td><td>3段階学習 + SLERPマージ</td></tr>
+        <tr><td><strong>EOS Pooling</strong></td><td>可変長入力から固定長出力が必要</td><td>Causal Attentionで末尾に情報集約</td></tr>
+    </tbody>
+</table>
+
+<h3>参考文献</h3>
+
+<ul>
+    <li>Alibaba Qwen Team. (2025). <a href="https://arxiv.org/abs/2601.04720" target="_blank" rel="noopener">Qwen3-VL-Embedding Technical Report</a>. arXiv:2601.04720.</li>
+    <li>Wang, P., et al. (2024). <a href="https://arxiv.org/abs/2409.12191" target="_blank" rel="noopener">Qwen2-VL: Enhancing Vision-Language Model's Perception of the World at Any Resolution</a>. arXiv:2409.12191.</li>
+    <li>Kusupati, A., et al. (2022). <a href="https://arxiv.org/abs/2205.13147" target="_blank" rel="noopener">Matryoshka Representation Learning</a>. NeurIPS 2022.</li>
+    <li>Su, J., et al. (2021). <a href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noopener">RoFormer: Enhanced Transformer with Rotary Position Embedding</a>. arXiv:2104.09864.</li>
+</ul>

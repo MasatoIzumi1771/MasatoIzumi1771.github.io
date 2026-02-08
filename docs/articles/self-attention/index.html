@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    
+    
+        
+    
+
+    <title>Self-Attention 詳細ガイド：Q, K, V から Multi-Head まで - Masato Izumi Portfolio</title>
+    <meta name="description" content="TransformerのSelf-Attention機構を詳しく解説。Q, K, Vの役割、Multi-Head Attention、FFN、InfoNCE Lossまでを図解と具体例で説明します。">
+    <link rel="canonical" href="https://masatoizumi1771.github.io/articles/self-attention/">
+    <meta property="og:title" content="Self-Attention 詳細ガイド：Q, K, V から Multi-Head まで - Masato Izumi Portfolio">
+    <meta property="og:description" content="TransformerのSelf-Attention機構を詳しく解説。Q, K, Vの役割、Multi-Head Attention、FFN、InfoNCE Lossまでを図解と具体例で説明します。">
+    <meta property="og:url" content="https://masatoizumi1771.github.io/articles/self-attention/">
+    
+        <meta property="og:type" content="article">
+    
+    
+        <meta property="og:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Self-Attention 詳細ガイド：Q, K, V から Multi-Head まで - Masato Izumi Portfolio">
+    <meta name="twitter:description" content="TransformerのSelf-Attention機構を詳しく解説。Q, K, Vの役割、Multi-Head Attention、FFN、InfoNCE Lossまでを図解と具体例で説明します。">
+    
+        <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        
+        "headline": "Self-Attention 詳細ガイド：Q, K, V から Multi-Head まで",
+        "datePublished": "2026-02-08",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "url": "https://masatoizumi1771.github.io"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Masato Izumi"
+        },
+        "description": "TransformerのSelf-Attention機構を詳しく解説。Q, K, Vの役割、Multi-Head Attention、FFN、InfoNCE Lossまでを図解と具体例で説明します。",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://masatoizumi1771.github.io/articles/self-attention/"
+        }
+        
+    }
+    </script>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
+</head>
+<body id="top">
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
+            <nav class="nav" id="nav">
+                <ul class="nav-list">
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/index.html">ホーム</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research_achievements.html">研究実績</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research.html">研究</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/skills.html">スキル</a>
+                        </li>
+                    
+                        
+                        
+                            
+                        
+                        <li class="nav-item">
+                            <a class="active-link" href="/articles.html">研究記事</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/other.html">その他</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/search.html">検索</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
+                <span class="menu-icon"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+
+
+<section class="article-detail section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="パンくずリスト">
+            <a href="/index.html">ホーム</a>
+            <span aria-hidden="true">/</span>
+            <a href="/articles.html">研究記事</a>
+            <span aria-hidden="true">/</span>
+            <span class="breadcrumb-current">Self-Attention 詳細ガイド：Q, K, V から Multi-Head まで</span>
+        </nav>
+        <h2 class="article-title">Self-Attention 詳細ガイド：Q, K, V から Multi-Head まで</h2>
+        <div class="article-meta-info">
+            <p class="article-meta">公開日: 2026.02.08</p>
+            <p class="reading-time" id="reading-time"></p>
+        </div>
+        
+            
+            
+                <ul class="tag-list" aria-label="タグ">
+                    
+                        <li class="tag-pill">Transformer</li>
+                    
+                        <li class="tag-pill">機械学習</li>
+                    
+                        <li class="tag-pill">Self-Attention</li>
+                    
+                </ul>
+            
+        
+        <nav class="toc" id="toc" aria-label="目次">
+            <h3 class="toc-title">目次</h3>
+            <ul class="toc-list" id="toc-list"></ul>
+        </nav>
+        <div class="article-body">
+            
+<p>
+    本記事では、TransformerのSelf-Attention機構を詳しく解説します。「なぜその仕組みが必要なのか」という動機から、具体的な計算の流れまでを丁寧に説明していきます。
+</p>
+
+<h3>Self-Attentionの目的</h3>
+
+<p>
+    各トークンは独立したベクトルとして入力されるため、文脈（周囲のトークン）の情報がありません。「bank」という単語が銀行なのか土手なのかは、周囲の単語を見なければわかりません。
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>問題</th>
+            <th>Self-Attention による解決</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>トークンが孤立</td><td>他のトークンの情報を取り込む</td></tr>
+        <tr><td>文脈がわからない</td><td>文脈依存の意味を表現</td></tr>
+        <tr><td>多義語の曖昧さ</td><td>周囲から正しい意味を判断</td></tr>
+    </tbody>
+</table>
+
+<h3>全体の流れ</h3>
+
+<pre><code>入力: X（トークン列、各トークン d次元）
+      [x₁, x₂, x₃, ...]  ← 位置エンコーディング済み
+
+Step 1: Q, K, V を生成（線形変換）
+  Q = X × Wq    (Query: 「何を探しているか」)
+  K = X × Wk    (Key: 「自分は何を持っているか」)
+  V = X × Wv    (Value: 「実際の情報」)
+
+Step 2: RoPE回転を適用（位置情報の付与）
+  Q' = RoPE(Q)
+  K' = RoPE(K)
+  V はそのまま（回転しない）
+
+Step 3: Attention Score を計算
+  Score = Q' × K'ᵀ / √d
+
+Step 4: Softmax で正規化
+  Attention Weight = softmax(Score)
+
+Step 5: Value の重み付け和
+  Output = Attention Weight × V
+
+出力: 文脈を考慮した新しいベクトル列</code></pre>
+
+<h3>Q, K, V の詳細</h3>
+
+<h4>なぜ Q, K, V に分けるのか</h4>
+
+<p>
+    単純にトークン同士の内積を取るだけでは、自分自身との類似度が常に最大になり、柔軟な注目パターンを学習できません。役割を分離することで柔軟な情報交換が可能になります。
+</p>
+
+<ul>
+    <li><strong>Query</strong>: 「私は何を探している？」← 探す視点</li>
+    <li><strong>Key</strong>: 「私は何を提供できる？」← 提供する視点</li>
+    <li><strong>Value</strong>: 「私の実際の情報」← 渡す情報</li>
+</ul>
+
+<h4>同じ入力から異なる重み行列で分ける</h4>
+
+<pre><code>同じ入力ベクトル X から:
+
+Q = X × Wq   ← 重み行列 Wq
+K = X × Wk   ← 重み行列 Wk（Wq とは別の値）
+V = X × Wv   ← 重み行列 Wv（Wq, Wk とは別の値）
+
+Wq, Wk, Wv はすべて学習パラメータ（異なる値）</code></pre>
+
+<h4>学習で獲得されること</h4>
+
+<pre><code>Wq が学ぶこと: 「何を探しているか」への変換
+  "bank" → 「金融 or 地理に関連するものを探している」
+
+Wk が学ぶこと: 「何を提供できるか」への変換
+  "money" → 「金融に関連する情報を提供できる」
+  "river" → 「地理に関連する情報を提供できる」
+
+マッチング:
+  Q_bank · K_money = 高い（金融 ↔ 金融）
+  Q_bank · K_river = 高い（地理 ↔ 地理）
+  → 文脈で「どちらに注目するか」が決まる</code></pre>
+
+<h3>Multi-Head Attention</h3>
+
+<h4>なぜ Multi-Head が必要か</h4>
+
+<p>
+    1つのヘッド（Single Head）では1種類の関係しか見れませんが、言語・画像には多様な関係があります。複数のヘッドで同時に観察することで、構文、意味、位置など多角的な情報収集が可能になります。
+</p>
+
+<pre><code>"彼女は銀行に行った"
+
+必要な関係性:
+  - 構文: 「彼女」→「行った」（主語-述語）
+  - 参照: 「彼女」→ 文脈の人物
+  - 意味: 「銀行」→ 金融機関 or 土手？
+  - 位置: 隣接する単語の関係
+
+1つのヘッドで全部は無理
+→ 128次元でも「1種類の関係」なら十分
+→ 16種類あれば多くの関係をカバー</code></pre>
+
+<h4>次元の分割</h4>
+
+<pre><code>入力: 1トークン = 2048次元ベクトル
+
+Q = X × Wq で Query を生成（2048次元）
+         ↓
+16個のヘッドに分割（2048 ÷ 16 = 128次元/ヘッド）
+
+[d₀, d₁, ..., d₁₂₇, d₁₂₈, ..., d₂₅₅, ..., d₁₉₂₀, ..., d₂₀₄₇]
+ └─── Head 1 ───┘  └─── Head 2 ───┘      └─── Head 16 ──┘
+     (128次元)         (128次元)              (128次元)</code></pre>
+
+<h4>分身チームの比喩</h4>
+
+<pre><code>入力トークン「今日」(2048次元)
+         │
+         ↓ 16分割
+┌────────┼────────┬────────┬─────┬────────┐
+↓        ↓        ↓        ↓     ↓
+分身1    分身2    分身3    ...   分身16
+(128dim) (128dim) (128dim)       (128dim)
+│        │        │              │
+↓        ↓        ↓              ↓
+「構文的に   「意味的に   「位置的に      「別の
+関係ある    関係ある    近いトークン    視点で
+トークンは？」トークンは？」は？」        は？」
+│        │        │              │
+└────────┴────────┴──────────────┘
+         │
+         ↓ 連結（合体）
+「今日」の新しいベクトル (2048次元)
+= 16人の分身が集めた情報の統合</code></pre>
+
+<h4>なぜ128次元でも十分か</h4>
+
+<p>
+    128次元 = $2^{128}$ 通りの方向を区別可能 = $10^{38}$ 通り（宇宙の原子数より多い）。「構文関係」だけを表現するには十分すぎるため、次元数の問題より「何を見るか」の多様性が重要です。
+</p>
+
+<h3>Attention Score の計算</h3>
+
+<h4>なぜスケーリング（$\sqrt{d_k}$ で割る）が必要か</h4>
+
+<p>
+    次元数が増えると内積の絶対値が大きくなります。大きい値がSoftmaxに入ると「勝者総取り」になり、1位以外の勾配がほぼ0になって学習が進みません。
+</p>
+
+$$
+\text{Score} = \frac{Q \times K^T}{\sqrt{d_k}}
+$$
+
+<h4>統計的な理由</h4>
+
+<p>
+    Q, K の各要素が平均0、分散1の分布だと仮定すると、$d_k$ 個の項の和の分散は $d_k$ に比例します。標準偏差 $\sqrt{d_k}$ で割ると分散が1に正規化されます。
+</p>
+
+<h3>Softmax と重み付け</h3>
+
+<h4>なぜ Softmax を使うのか</h4>
+
+<ul>
+    <li>全て正の値になる</li>
+    <li>合計が1.0になる（確率分布として扱える）</li>
+    <li>差を強調しつつ、全員に少しは重みを残す</li>
+</ul>
+
+<h4>Softmax の計算例</h4>
+
+<pre><code>Score = [2.1, 0.5, -0.3]  ← 3トークンへの注目度（正規化前）
+
+Step 1: exp を取る
+  exp([2.1, 0.5, -0.3]) = [8.17, 1.65, 0.74]
+
+Step 2: 合計で割る
+  合計 = 8.17 + 1.65 + 0.74 = 10.56
+
+  Weight = [8.17/10.56, 1.65/10.56, 0.74/10.56]
+         = [0.77, 0.16, 0.07]
+
+→ 合計 = 1.0（確率分布）
+→ 大きいスコアほど大きい重み</code></pre>
+
+<h4>Value の重み付け和</h4>
+
+<pre><code>Weight = [0.77, 0.16, 0.07]  ← トークン1の注目度
+
+V₁ = [0.2, 0.8, ...]  ← トークン1のValue
+V₂ = [0.5, 0.3, ...]  ← トークン2のValue
+V₃ = [0.1, 0.6, ...]  ← トークン3のValue
+
+出力₁ = 0.77×V₁ + 0.16×V₂ + 0.07×V₃
+
+→ 重みが大きいトークンの情報が多く混入</code></pre>
+
+<h3>FFN（Feed Forward Network）</h3>
+
+<h4>なぜ FFN が必要か：線形と非線形</h4>
+
+<p>
+    Self-Attentionの最終出力は、Valueベクトルの<strong>重み付き平均</strong>です。これは足し算と掛け算だけの「線形結合」であり、活性化関数を使いません。
+</p>
+
+<pre><code>あるトークンの出力 = 0.7×V₁ + 0.2×V₂ + 0.1×V₃
+                    ↑
+              線形結合（足し算と掛け算のみ）</code></pre>
+
+<p>
+    線形変換だけでは、何層重ねても1層と同じです：
+</p>
+
+<pre><code>層1: y = W₁x
+層2: z = W₂y = W₂(W₁x) = (W₂W₁)x = Wx
+
+→ 結局1つの行列Wと同じ
+→ 層を深くする意味がない</code></pre>
+
+<p>
+    FFNは活性化関数（GELU）で非線形性を加えることで、複雑なパターンを学習可能にします。
+</p>
+
+<h4>FFN の式と各記号の意味</h4>
+
+$$
+\text{FFN}(x) = \text{GELU}(x W_1 + b_1) W_2 + b_2
+$$
+
+<table>
+    <thead>
+        <tr>
+            <th>記号</th>
+            <th>意味</th>
+            <th>サイズ例</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>$x$</td><td>入力ベクトル（Attentionの出力）</td><td>2048次元</td></tr>
+        <tr><td>$W_1$</td><td>第1層の重み行列</td><td>2048 × 8192</td></tr>
+        <tr><td>$b_1$</td><td>第1層のバイアス</td><td>8192次元</td></tr>
+        <tr><td>$W_2$</td><td>第2層の重み行列</td><td>8192 × 2048</td></tr>
+        <tr><td>$b_2$</td><td>第2層のバイアス</td><td>2048次元</td></tr>
+        <tr><td>GELU</td><td>活性化関数</td><td>-</td></tr>
+    </tbody>
+</table>
+
+<pre><code>入力 x (2048次元)
+    ↓ × W₁ + b₁
+隠れ層 (8192次元)  ← 4倍に拡張
+    ↓ GELU
+活性化後 (8192次元)
+    ↓ × W₂ + b₂
+出力 (2048次元)    ← 元に戻す</code></pre>
+
+<h4>GELU（活性化関数）の役割</h4>
+
+<p>
+    GELU（Gaussian Error Linear Unit）は「柔らかいReLU」です：
+</p>
+
+$$
+\text{GELU}(x) = x \times \Phi(x)
+$$
+
+<p>
+    $\Phi(x)$ は正規分布の累積分布関数（「xが正である確率」）です。
+</p>
+
+<pre><code>x が大きい正 → ほぼ x をそのまま出力
+x が大きい負 → ほぼ 0 を出力
+x が 0 付近  → 滑らかに遷移</code></pre>
+
+<table>
+    <thead>
+        <tr>
+            <th>x</th>
+            <th>ReLU(x)</th>
+            <th>GELU(x)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>-2</td><td>0</td><td>-0.05</td></tr>
+        <tr><td>-1</td><td>0</td><td>-0.16</td></tr>
+        <tr><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>0.84</td></tr>
+        <tr><td>2</td><td>2</td><td>1.95</td></tr>
+    </tbody>
+</table>
+
+<h4>なぜ ReLU ではなく GELU か</h4>
+
+<ul>
+    <li><strong>滑らかさ</strong>：ReLUは x=0 で角があるが、GELUは全域で滑らか → 勾配が安定</li>
+    <li><strong>負の値も少し通す</strong>：ReLUは x&lt;0 で勾配0（学習が止まる）、GELUは小さい勾配が残る</li>
+    <li><strong>確率的解釈</strong>：「この入力は重要か？」を確率的に判断</li>
+</ul>
+
+<h4>重みとバイアスはどう決まるか</h4>
+
+<p>
+    $W_1$, $W_2$, $b_1$, $b_2$ は<strong>学習で獲得されるパラメータ</strong>です。
+</p>
+
+<pre><code>【初期化】ランダムな小さい値
+  W₁, W₂ = 平均0、標準偏差0.02程度のランダム値
+  b₁, b₂ = 0 または小さい値
+
+【学習中】勾配降下法で更新
+  1. 入力を与えて出力を計算（順伝播）
+  2. 正解との誤差（Loss）を計算
+  3. 誤差を逆方向に伝播（逆伝播）
+  4. 各重みの勾配（∂Loss/∂W）を計算
+  5. 重みを更新：W ← W - 学習率 × 勾配
+
+  これを何億回も繰り返す</code></pre>
+
+<h4>バイアスの役割</h4>
+
+<pre><code>y = Wx + b
+        ↑
+      バイアス = 「基準点の調整」
+
+b が正 → GELUの閾値が下がり、より通しやすくなる
+b が負 → GELUの閾値が上がり、より抑制しやすくなる</code></pre>
+
+<h4>FFN = 知識の保存場所</h4>
+
+<p>
+    研究（Geva et al., 2021）によると、FFNは<strong>連想記憶</strong>として機能します：
+</p>
+
+<pre><code>W₁の各行 = Key（パターン検出器）
+W₂の各列 = Value（対応する出力）
+
+例：
+  W₁のある行が「首都に関する文脈」を検出
+    ↓ GELU で活性化
+  W₂の対応する列が「首都の知識」を出力に加える</code></pre>
+
+<h4>FFN vs Attention の役割分担</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>Self-Attention</th>
+            <th>FFN</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>何をする</td><td>トークン間の情報を混ぜる</td><td>各トークンを個別に変換</td></tr>
+        <tr><td>学ぶもの</td><td>「誰を見るか」のパターン</td><td>「何を出力するか」の知識</td></tr>
+        <tr><td>例</td><td>「bank」は「money」を見る</td><td>「Tokyo」→「日本の首都」</td></tr>
+        <tr><td>線形性</td><td>重み付き平均（線形）</td><td>GELU（非線形）</td></tr>
+    </tbody>
+</table>
+
+<h3>RoPE との関係</h3>
+
+<p>
+    Self-Attentionは全トークンを一度に比較するため、順番の情報がありません。「犬が猫を追いかけた」と「猫が犬を追いかけた」は同じトークン集合のため、区別できません。
+</p>
+
+<h4>RoPE の適用タイミング</h4>
+
+<pre><code>1. Q, K, V を生成
+   Q = X × Wq
+   K = X × Wk
+   V = X × Wv
+
+2. Q と K に RoPE を適用 ← ここで位置情報が入る
+   Q' = RoPE(Q, position)
+   K' = RoPE(K, position)
+
+3. Attention Score を計算 ← ここで位置情報が効果を発揮
+   Score = Q' × K'ᵀ / √d_k
+   （この内積計算で相対位置 (m-n) がスコアに反映される）
+
+4. Softmax → 重み付け和
+   Output = softmax(Score) × V  ← V は回転しない</code></pre>
+
+<h4>なぜ Q と K だけに適用するのか</h4>
+
+<ul>
+    <li><strong>Q, K の役割</strong>: 「誰に注目するか」を決める → 位置によって注目パターンを変えたい</li>
+    <li><strong>V の役割</strong>: 「実際の情報」を渡す → 情報そのものは位置で変わらない</li>
+</ul>
+
+<h3>InfoNCE Loss（対照学習）</h3>
+
+<h4>なぜ InfoNCE を使うのか</h4>
+
+<p>
+    Embeddingは「類似度」を学習したいですが、クラス数が膨大で相対的な順序が重要です。InfoNCEは正解との類似度を高く、不正解との類似度を低くする相対的な差を学習します。
+</p>
+
+<h4>InfoNCE の数式</h4>
+
+$$
+L = -\log \frac{\exp(\text{sim}(q, d^+) / \tau)}{\exp(\text{sim}(q, d^+) / \tau) + \sum_i \exp(\text{sim}(q, d_i^-) / \tau)}
+$$
+
+<table>
+    <thead>
+        <tr>
+            <th>要素</th>
+            <th>役割</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>$\text{sim}(q, d^+)$</td><td>正解との類似度を高くしたい</td></tr>
+        <tr><td>$\text{sim}(q, d^-)$</td><td>不正解との類似度を低くしたい</td></tr>
+        <tr><td>$\exp(\cdot/\tau)$</td><td>差を強調（$\tau$小→シャープ）</td></tr>
+        <tr><td>$-\log$</td><td>確率→損失に変換</td></tr>
+    </tbody>
+</table>
+
+<h4>温度パラメータ $\tau$ の役割</h4>
+
+<pre><code>【τ が大きい（高温）】
+softmax: [0.32, 0.30, 0.22, 0.16]  ← なだらか
+  - 分布が均等に近い
+  - 多くのネガティブから学べる
+  - 学習が安定
+
+【τ が小さい（低温）】
+softmax: [0.70, 0.26, 0.03, 0.00]  ← シャープ
+  - 正解が際立つ
+  - Hard Negative に集中
+  - 識別力が高い</code></pre>
+
+<h3>まとめ</h3>
+
+<pre><code>Self-Attention の核心:
+
+1. Q, K, V への変換
+   → 「探す」「提供」「情報」を分離
+
+2. 内積で類似度計算
+   → どのトークンに注目するか決定
+
+3. スケーリング（√d_k）
+   → 勾配を安定させる
+
+4. Softmax で正規化
+   → 確率分布として扱える
+
+5. Value の重み付け和
+   → 関連トークンの情報を取り込む
+
+6. Multi-Head で並列化
+   → 多角的な注目パターン（分身チーム）
+
+7. RoPE で位置情報
+   → 相対位置が内積に反映
+
+8. FFN で知識処理
+   → 非線形変換と知識の保存</code></pre>
+
+<h3>参考文献</h3>
+
+<ul>
+    <li>Vaswani, A., et al. (2017). <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Attention Is All You Need</a>. NeurIPS 2017.</li>
+    <li>Geva, M., et al. (2021). <a href="https://arxiv.org/abs/2012.14913" target="_blank" rel="noopener">Transformer Feed-Forward Layers Are Key-Value Memories</a>. EMNLP 2021.</li>
+</ul>
+
+        </div>
+        
+            
+            
+            
+                
+            
+                
+            
+                
+            
+                
+                    
+                    
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+            <div class="article-nav-links">
+                
+                
+            </div>
+        
+        <div class="article-navigation">
+            <a class="back-to-list" href="/articles.html">記事一覧に戻る</a>
+        </div>
+    </div>
+</section>
+
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Masato Izumi Portfolio</p>
+            <a class="footer-back-to-top" href="#top" aria-label="ページの先頭へ戻る">トップへ戻る</a>
+        </div>
+    </footer>
+
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
+    <script src="/js/main.js"></script>
+    
+</body>
+</html>

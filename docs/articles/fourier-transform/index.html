@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    
+    
+        
+    
+
+    <title>フーリエ変換の基礎：RoPEを理解するための数学的準備 - Masato Izumi Portfolio</title>
+    <meta name="description" content="RoPE（Rotary Position Embedding）の理解に必要なフーリエ変換の数学的背景を、直感的な説明と厳密な数式の両面から解説します。">
+    <link rel="canonical" href="https://masatoizumi1771.github.io/articles/fourier-transform/">
+    <meta property="og:title" content="フーリエ変換の基礎：RoPEを理解するための数学的準備 - Masato Izumi Portfolio">
+    <meta property="og:description" content="RoPE（Rotary Position Embedding）の理解に必要なフーリエ変換の数学的背景を、直感的な説明と厳密な数式の両面から解説します。">
+    <meta property="og:url" content="https://masatoizumi1771.github.io/articles/fourier-transform/">
+    
+        <meta property="og:type" content="article">
+    
+    
+        <meta property="og:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="フーリエ変換の基礎：RoPEを理解するための数学的準備 - Masato Izumi Portfolio">
+    <meta name="twitter:description" content="RoPE（Rotary Position Embedding）の理解に必要なフーリエ変換の数学的背景を、直感的な説明と厳密な数式の両面から解説します。">
+    
+        <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        
+        "headline": "フーリエ変換の基礎：RoPEを理解するための数学的準備",
+        "datePublished": "2026-02-08",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "url": "https://masatoizumi1771.github.io"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Masato Izumi"
+        },
+        "description": "RoPE（Rotary Position Embedding）の理解に必要なフーリエ変換の数学的背景を、直感的な説明と厳密な数式の両面から解説します。",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://masatoizumi1771.github.io/articles/fourier-transform/"
+        }
+        
+    }
+    </script>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
+</head>
+<body id="top">
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
+            <nav class="nav" id="nav">
+                <ul class="nav-list">
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/index.html">ホーム</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research_achievements.html">研究実績</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research.html">研究</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/skills.html">スキル</a>
+                        </li>
+                    
+                        
+                        
+                            
+                        
+                        <li class="nav-item">
+                            <a class="active-link" href="/articles.html">研究記事</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/other.html">その他</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/search.html">検索</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
+                <span class="menu-icon"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+
+
+<section class="article-detail section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="パンくずリスト">
+            <a href="/index.html">ホーム</a>
+            <span aria-hidden="true">/</span>
+            <a href="/articles.html">研究記事</a>
+            <span aria-hidden="true">/</span>
+            <span class="breadcrumb-current">フーリエ変換の基礎：RoPEを理解するための数学的準備</span>
+        </nav>
+        <h2 class="article-title">フーリエ変換の基礎：RoPEを理解するための数学的準備</h2>
+        <div class="article-meta-info">
+            <p class="article-meta">公開日: 2026.02.08</p>
+            <p class="reading-time" id="reading-time"></p>
+        </div>
+        
+            
+            
+                <ul class="tag-list" aria-label="タグ">
+                    
+                        <li class="tag-pill">数学</li>
+                    
+                        <li class="tag-pill">Transformer</li>
+                    
+                        <li class="tag-pill">機械学習</li>
+                    
+                </ul>
+            
+        
+        <nav class="toc" id="toc" aria-label="目次">
+            <h3 class="toc-title">目次</h3>
+            <ul class="toc-list" id="toc-list"></ul>
+        </nav>
+        <div class="article-body">
+            
+<p>
+    本記事では、Transformerの位置エンコーディング手法であるRoPE（Rotary Position Embedding）を深く理解するために必要な、フーリエ変換の数学的背景を解説します。直感的な理解と数学的な厳密さの両方を大切にしながら進めていきます。
+</p>
+
+<h3>フーリエ変換の基本アイデア</h3>
+
+<p>
+    フーリエ変換の核心は、次の一文に集約されます：
+</p>
+
+<blockquote>
+    「どんな複雑な波も、単純な波（sin/cos）の重ね合わせで表現できる」
+</blockquote>
+
+<p>
+    例えば、ピアノの「ド」の音は、基本周波数の波と、その整数倍の周波数を持つ倍音が重ね合わさって作られています。異なる楽器で同じ「ド」を弾いても音色が違うのは、含まれる周波数成分の比率（スペクトル）が異なるからです。
+</p>
+
+<h3>数学的定式化：フーリエ級数</h3>
+
+<p>
+    周期 $2\pi$ を持つ任意の関数 $f(x)$ は、以下のフーリエ級数で表現できます：
+</p>
+
+$$
+f(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty} \left( a_n \cos(nx) + b_n \sin(nx) \right)
+$$
+
+<p>
+    ここで、フーリエ係数 $a_n$, $b_n$ は以下の積分で求められます：
+</p>
+
+$$
+a_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(x) \cos(nx) \, dx
+$$
+
+$$
+b_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(x) \sin(nx) \, dx
+$$
+
+<h4>なぜこの形で表現できるのか：直交性</h4>
+
+<p>
+    sin関数とcos関数がフーリエ級数の基底として選ばれる理由は、その<strong>直交性</strong>にあります。関数の内積を以下のように定義したとき：
+</p>
+
+$$
+\langle f, g \rangle = \int_{-\pi}^{\pi} f(x) g(x) \, dx
+$$
+
+<p>
+    sin関数とcos関数は以下の直交関係を満たします：
+</p>
+
+$$
+\int_{-\pi}^{\pi} \cos(mx) \cos(nx) \, dx = \begin{cases} \pi & (m = n \neq 0) \\ 0 & (m \neq n) \end{cases}
+$$
+
+$$
+\int_{-\pi}^{\pi} \sin(mx) \sin(nx) \, dx = \begin{cases} \pi & (m = n \neq 0) \\ 0 & (m \neq n) \end{cases}
+$$
+
+$$
+\int_{-\pi}^{\pi} \cos(mx) \sin(nx) \, dx = 0 \quad (\forall m, n)
+$$
+
+<p>
+    この直交性により、各周波数成分を独立に抽出でき、異なる周波数同士が干渉しません。これは、3次元空間でx軸・y軸・z軸が直交していることで、各座標成分を独立に扱えることと本質的に同じです。
+</p>
+
+<h3>オイラーの公式と複素指数関数表現</h3>
+
+<p>
+    フーリエ変換をより簡潔に扱うために、オイラーの公式を導入します：
+</p>
+
+$$
+e^{i\theta} = \cos\theta + i\sin\theta
+$$
+
+<p>
+    この公式を使うと、sin と cos を統一的に扱えます：
+</p>
+
+$$
+\cos\theta = \frac{e^{i\theta} + e^{-i\theta}}{2}, \quad \sin\theta = \frac{e^{i\theta} - e^{-i\theta}}{2i}
+$$
+
+<p>
+    フーリエ級数は複素指数関数を使って以下のように書き換えられます：
+</p>
+
+$$
+f(x) = \sum_{n=-\infty}^{\infty} c_n e^{inx}
+$$
+
+<p>
+    ここで複素フーリエ係数は：
+</p>
+
+$$
+c_n = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(x) e^{-inx} \, dx
+$$
+
+<h4>複素平面での解釈</h4>
+
+<p>
+    $e^{i\theta}$ は複素平面上の単位円周上の点を表し、$\theta$ が増加すると反時計回りに回転します。これが後述するRoPEの「回転」と直接つながります。
+</p>
+
+<h3>周波数の役割：マルチスケール表現</h3>
+
+<p>
+    フーリエ級数で複数の周波数を使う理由は、異なるスケールの情報を同時に捉えるためです。
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>周波数</th>
+            <th>捉える情報</th>
+            <th>例</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>低周波（nが小さい）</td>
+            <td>大域的な傾向</td>
+            <td>文章全体の流れ</td>
+        </tr>
+        <tr>
+            <td>中周波</td>
+            <td>中程度の構造</td>
+            <td>段落レベルの関係</td>
+        </tr>
+        <tr>
+            <td>高周波（nが大きい）</td>
+            <td>局所的な変動</td>
+            <td>隣接単語の関係</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    これらを組み合わせることで、あらゆるスケールの情報を同時に表現できます。
+</p>
+
+<h3>RoPEとフーリエ変換の数学的対応</h3>
+
+<p>
+    RoPE（Rotary Position Embedding）は、位置情報をベクトルの回転として埋め込む手法です。フーリエ変換との対応を見ていきましょう。
+</p>
+
+<h4>RoPEの回転行列</h4>
+
+<p>
+    RoPEでは、位置 $m$ において、ベクトルの各2次元ペア $(x_{2i}, x_{2i+1})$ に対して以下の回転行列を適用します：
+</p>
+
+$$
+R_m^{(i)} = \begin{pmatrix} \cos(m\theta_i) & -\sin(m\theta_i) \\ \sin(m\theta_i) & \cos(m\theta_i) \end{pmatrix}
+$$
+
+<p>
+    ここで $\theta_i$ は各ペアに固有の周波数パラメータで、以下のように定義されます：
+</p>
+
+$$
+\theta_i = 10000^{-2i/d}
+$$
+
+<p>
+    $d$ はモデルの次元数です。$i$ が大きくなると $\theta_i$ は小さくなり、低周波の回転となります。
+</p>
+
+<h4>複素数表現との対応</h4>
+
+<p>
+    2次元ベクトル $(x, y)$ を複素数 $z = x + iy$ と見なすと、回転行列の適用は複素数の乗算に対応します：
+</p>
+
+$$
+z' = z \cdot e^{im\theta_i} = (x + iy)(\cos(m\theta_i) + i\sin(m\theta_i))
+$$
+
+<p>
+    これはまさにオイラーの公式の形であり、RoPEがフーリエ変換と同じ数学的構造を持つことを示しています。
+</p>
+
+<h4>相対位置の内積表現</h4>
+
+<p>
+    RoPEの重要な性質として、位置 $m$ のクエリと位置 $n$ のキーの内積が、相対位置 $(m-n)$ のみに依存するという点があります：
+</p>
+
+$$
+\langle R_m q, R_n k \rangle = \langle R_{m-n} q, k \rangle
+$$
+
+<p>
+    これは回転行列の性質 $R_m^T R_n = R_{n-m}$ から導かれます。各ペアについて：
+</p>
+
+$$
+(R_m^{(i)})^T R_n^{(i)} = R_{n-m}^{(i)}
+$$
+
+<p>
+    内積に寄与する各ペアの成分は $\cos((m-n)\theta_i)$ の形となり、これはフーリエ級数における周波数成分と同じ構造です。
+</p>
+
+<h3>一意性の保証</h3>
+
+<p>
+    複数の周波数を組み合わせることで、任意の位置差を一意に区別できます。これを具体例で見てみましょう。
+</p>
+
+<h4>位置差1と位置差7の区別</h4>
+
+<p>
+    3つの周波数ペアで位置差を比較します：
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>位置差</th>
+            <th>$\theta_0 = 1.0$</th>
+            <th>$\theta_1 = 0.1$</th>
+            <th>$\theta_2 = 0.01$</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>$\cos(1.0) \approx 0.54$</td>
+            <td>$\cos(0.1) \approx 0.995$</td>
+            <td>$\cos(0.01) \approx 0.99995$</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>$\cos(7.0) \approx 0.75$</td>
+            <td>$\cos(0.7) \approx 0.765$</td>
+            <td>$\cos(0.07) \approx 0.998$</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    高周波ペア（$\theta_0$）では値が似ていますが、中・低周波ペア（$\theta_1$, $\theta_2$）では明確に異なります。全てのペアを組み合わせることで、一意の識別が可能になります。
+</p>
+
+<h4>住所システムとの類似</h4>
+
+<p>
+    この仕組みは住所システムと似ています：
+</p>
+
+<ul>
+    <li><strong>国（低周波）</strong>：大きな範囲を区別</li>
+    <li><strong>都道府県（中周波）</strong>：中程度の範囲を区別</li>
+    <li><strong>番地（高周波）</strong>：最も細かい位置を区別</li>
+</ul>
+
+<p>
+    RoPEも同様に、低周波ペアは「だいたい1000トークン以内か否か」、高周波ペアは「隣接トークンか2つ離れているか」といった異なるスケールの位置関係を捉えます。
+</p>
+
+<h3>まとめ</h3>
+
+<p>
+    フーリエ変換とRoPEの数学的なつながりを整理すると：
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>フーリエ変換</th>
+            <th>RoPE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>$e^{inx}$ による周波数分解</td>
+            <td>$e^{im\theta_i}$ による位置エンコーディング</td>
+        </tr>
+        <tr>
+            <td>複数周波数の重ね合わせ</td>
+            <td>複数の $\theta_i$ ペアの組み合わせ</td>
+        </tr>
+        <tr>
+            <td>直交基底による一意表現</td>
+            <td>回転角の組み合わせによる一意な位置表現</td>
+        </tr>
+        <tr>
+            <td>低周波：大域的構造</td>
+            <td>小さい $\theta_i$：遠距離位置関係</td>
+        </tr>
+        <tr>
+            <td>高周波：局所的構造</td>
+            <td>大きい $\theta_i$：近距離位置関係</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    RoPEは、フーリエ変換の「複数の周波数成分を組み合わせて任意の情報を表現する」という本質的なアイデアを、Transformerの位置エンコーディングに応用した手法と言えます。
+</p>
+
+<h3>参考文献</h3>
+
+<ul>
+    <li>Su, J., Lu, Y., Pan, S., Murtadha, A., Wen, B., & Liu, Y. (2021). <a href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noopener">RoFormer: Enhanced Transformer with Rotary Position Embedding</a>. arXiv:2104.09864.</li>
+    <li>3Blue1Brown. <a href="https://www.youtube.com/watch?v=spUNpyF58BY" target="_blank" rel="noopener">But what is the Fourier Transform? A visual introduction</a>. YouTube.</li>
+</ul>
+
+        </div>
+        
+            
+            
+            
+                
+                    
+                    
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+            <div class="article-nav-links">
+                
+                
+            </div>
+        
+        <div class="article-navigation">
+            <a class="back-to-list" href="/articles.html">記事一覧に戻る</a>
+        </div>
+    </div>
+</section>
+
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Masato Izumi Portfolio</p>
+            <a class="footer-back-to-top" href="#top" aria-label="ページの先頭へ戻る">トップへ戻る</a>
+        </div>
+    </footer>
+
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
+    <script src="/js/main.js"></script>
+    
+</body>
+</html>

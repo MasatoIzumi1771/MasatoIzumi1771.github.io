@@ -59,7 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // フェードインアニメーション（Intersection Observer）
-    const fadeElements = document.querySelectorAll('.section, .article-preview, .article-card, .skill-category, .history-item');
+    // 記事詳細ページではフェードインをスキップ（問題の切り分け）
+    const isArticlePage = document.querySelector('.article-detail');
+    const fadeElements = document.querySelectorAll('.article-preview, .article-card, .skill-category, .history-item' + (isArticlePage ? '' : ', .section'));
 
     fadeElements.forEach(el => {
         el.classList.add('fade-in');
@@ -163,7 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 {left: '$', right: '$', display: false},
                 {left: '\\(', right: '\\)', display: false},
                 {left: '\\[', right: '\\]', display: true}
-            ]
+            ],
+            throwOnError: false,
+            ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
         });
     }
 });

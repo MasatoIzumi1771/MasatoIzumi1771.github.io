@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    
+    
+        
+    
+
+    <title>位置エンコーディング解説：RoPE から Interleaved-MRoPE まで - Masato Izumi Portfolio</title>
+    <meta name="description" content="RoPE（Rotary Positional Embedding）からMRoPE、Interleaved-MRoPEまで、Transformerの位置エンコーディング技術を図解と具体例で解説します。">
+    <link rel="canonical" href="https://masatoizumi1771.github.io/articles/rope-positional-encoding/">
+    <meta property="og:title" content="位置エンコーディング解説：RoPE から Interleaved-MRoPE まで - Masato Izumi Portfolio">
+    <meta property="og:description" content="RoPE（Rotary Positional Embedding）からMRoPE、Interleaved-MRoPEまで、Transformerの位置エンコーディング技術を図解と具体例で解説します。">
+    <meta property="og:url" content="https://masatoizumi1771.github.io/articles/rope-positional-encoding/">
+    
+        <meta property="og:type" content="article">
+    
+    
+        <meta property="og:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="位置エンコーディング解説：RoPE から Interleaved-MRoPE まで - Masato Izumi Portfolio">
+    <meta name="twitter:description" content="RoPE（Rotary Positional Embedding）からMRoPE、Interleaved-MRoPEまで、Transformerの位置エンコーディング技術を図解と具体例で解説します。">
+    
+        <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        
+        "headline": "位置エンコーディング解説：RoPE から Interleaved-MRoPE まで",
+        "datePublished": "2026-02-08",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "url": "https://masatoizumi1771.github.io"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Masato Izumi"
+        },
+        "description": "RoPE（Rotary Positional Embedding）からMRoPE、Interleaved-MRoPEまで、Transformerの位置エンコーディング技術を図解と具体例で解説します。",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://masatoizumi1771.github.io/articles/rope-positional-encoding/"
+        }
+        
+    }
+    </script>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
+</head>
+<body id="top">
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
+            <nav class="nav" id="nav">
+                <ul class="nav-list">
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/index.html">ホーム</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research_achievements.html">研究実績</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research.html">研究</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/skills.html">スキル</a>
+                        </li>
+                    
+                        
+                        
+                            
+                        
+                        <li class="nav-item">
+                            <a class="active-link" href="/articles.html">研究記事</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/other.html">その他</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/search.html">検索</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
+                <span class="menu-icon"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+
+
+<section class="article-detail section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="パンくずリスト">
+            <a href="/index.html">ホーム</a>
+            <span aria-hidden="true">/</span>
+            <a href="/articles.html">研究記事</a>
+            <span aria-hidden="true">/</span>
+            <span class="breadcrumb-current">位置エンコーディング解説：RoPE から Interleaved-MRoPE まで</span>
+        </nav>
+        <h2 class="article-title">位置エンコーディング解説：RoPE から Interleaved-MRoPE まで</h2>
+        <div class="article-meta-info">
+            <p class="article-meta">公開日: 2026.02.08</p>
+            <p class="reading-time" id="reading-time"></p>
+        </div>
+        
+            
+            
+                <ul class="tag-list" aria-label="タグ">
+                    
+                        <li class="tag-pill">Transformer</li>
+                    
+                        <li class="tag-pill">機械学習</li>
+                    
+                        <li class="tag-pill">位置エンコーディング</li>
+                    
+                </ul>
+            
+        
+        <nav class="toc" id="toc" aria-label="目次">
+            <h3 class="toc-title">目次</h3>
+            <ul class="toc-list" id="toc-list"></ul>
+        </nav>
+        <div class="article-body">
+            
+<p>
+    Transformerは入力の順序を認識できません（Self-Attentionは順序に依存しない）。そのため、位置情報を明示的に与える必要があります。本記事では、RoPE（Rotary Positional Embedding）を中心に、マルチモーダル対応のMRoPE、Interleaved-MRoPEまでを解説します。
+</p>
+
+<h3>なぜ位置エンコーディングが必要か</h3>
+
+<p>
+    「今日 は 晴れ」と「晴れ は 今日」は、位置情報がないとTransformerには同じに見えてしまいます。単語の順序が意味を決定する言語において、位置情報は不可欠です。
+</p>
+
+<h3>RoPE (Rotary Positional Embedding)</h3>
+
+<h4>基本アイデア</h4>
+
+<p>
+    RoPEは、埋め込みベクトルの2次元ペアを「2D平面上の点」と見なし、位置に応じて回転させる手法です。
+</p>
+
+<h4>ステップ1: 埋め込みを2次元ペアに分ける</h4>
+
+<pre><code>埋め込みベクトル（例: 6次元）
+[x₀, x₁, x₂, x₃, x₄, x₅]
+  ↓
+ペアに分割
+(x₀, x₁), (x₂, x₃), (x₄, x₅)
+  ↓
+各ペアを2D平面上の点と見なす</code></pre>
+
+<h4>ステップ2: 位置に応じた角度で回転</h4>
+
+<p>
+    位置 $p$ のトークンに対し、角度 $p \times \theta$ で回転を適用します：
+</p>
+
+$$
+\begin{pmatrix} x' \\ y' \end{pmatrix} = \begin{pmatrix} \cos(p\theta) & -\sin(p\theta) \\ \sin(p\theta) & \cos(p\theta) \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix}
+$$
+
+<h4>なぜ回転が有効なのか：内積の性質</h4>
+
+<p>
+    位置 $p$ のトークンと位置 $q$ のトークンの内積を計算すると、回転角度の差 $(p-q) \times \theta$ に依存します。つまり、<strong>絶対位置ではなく「相対位置」$(p-q)$ が自然にエンコードされる</strong>のです。
+</p>
+
+<pre><code>「今日」と「晴れ」の関係:
+  位置差 = 3 - 1 = 2
+  → 回転角度の差 = 2×θ
+
+「は」と「晴れ」の関係:
+  位置差 = 3 - 2 = 1
+  → 回転角度の差 = 1×θ
+
+距離が近いほど回転角度の差が小さい
+→ 内積（類似度）が高くなる</code></pre>
+
+<h3>RoPE詳細解説</h3>
+
+<h4>2次元ペアは1トークン内の話</h4>
+
+<p>
+    2次元ペアへの分割は<strong>1つのトークンの埋め込みベクトル内</strong>で行われます。
+</p>
+
+<pre><code>1つのトークン「今日」の埋め込みベクトル（例: 768次元）
+
+[x₀, x₁, x₂, x₃, x₄, x₅, ..., x₇₆₆, x₇₆₇]
+  ↓
+2次元ペアに分割（384ペア）
+
+(x₀, x₁)    → ペア0: θ₀で回転
+(x₂, x₃)    → ペア1: θ₁で回転
+(x₄, x₅)    → ペア2: θ₂で回転
+...
+(x₇₆₆, x₇₆₇) → ペア383: θ₃₈₃で回転</code></pre>
+
+<h4>各ペアは異なる周波数を持つ</h4>
+
+<p>
+    周波数パラメータ $\theta_i$ は以下のように定義されます：
+</p>
+
+$$
+\theta_i = 10000^{-2i/d}
+$$
+
+<table>
+    <thead>
+        <tr>
+            <th>ペア番号</th>
+            <th>$\theta_i$ の値</th>
+            <th>特性</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>$i=0$</td>
+            <td>$\theta_0 = 1$</td>
+            <td>高周波 → 近い位置の違いに敏感</td>
+        </tr>
+        <tr>
+            <td>$i=100$</td>
+            <td>$\theta_{100} \approx 0.05$</td>
+            <td>中周波</td>
+        </tr>
+        <tr>
+            <td>$i=383$</td>
+            <td>$\theta_{383} \approx 0.0001$</td>
+            <td>低周波 → 遠い位置の違いに敏感</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>なぜ1トークンの回転が他トークンとの位置関係につながるのか</h4>
+
+<p>
+    回転は各トークンに対して行われますが、<strong>効果が現れるのはAttentionの内積計算時</strong>です。
+</p>
+
+<pre><code>ステップ1: 各トークンを自分の位置で回転（個別の操作）
+
+「今日」(位置1) → 1×θ で回転 → q₁
+「は」 (位置2) → 2×θ で回転 → q₂
+「晴れ」(位置3) → 3×θ で回転 → q₃
+
+ステップ2: Attentionで内積を計算（ここで位置関係が現れる）
+
+q₁ · q₃ の内積を計算すると...
+  → 回転角度の差 (3-1)×θ = 2θ が内積に反映される
+  → 「今日」と「晴れ」は2トークン離れている、という情報が含まれる</code></pre>
+
+<h4>高周波・低周波と位置感度の関係</h4>
+
+<p>
+    内積に $\cos((p-q) \times \theta)$ が現れるため、周波数 $\theta$ が位置差への感度を決めます。
+</p>
+
+<p><strong>高周波ペア（$\theta=1.0$）の場合：</strong></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>位置差$(p-q)$</th>
+            <th>角度差</th>
+            <th>cos値</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>1</td><td>1.0</td><td>0.54</td></tr>
+        <tr><td>2</td><td>2.0</td><td>-0.42</td></tr>
+        <tr><td>3</td><td>3.0</td><td>-0.99</td></tr>
+    </tbody>
+</table>
+
+<p>→ 位置差1と2で内積が大きく変わる → <strong>近距離に敏感</strong></p>
+
+<p><strong>低周波ペア（$\theta=0.01$）の場合：</strong></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>位置差$(p-q)$</th>
+            <th>角度差</th>
+            <th>cos値</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>1</td><td>0.01</td><td>0.99995</td></tr>
+        <tr><td>2</td><td>0.02</td><td>0.99980</td></tr>
+        <tr><td>100</td><td>1.00</td><td>0.54</td></tr>
+    </tbody>
+</table>
+
+<p>→ 位置差1〜4では内積がほぼ変わらない → <strong>長距離に敏感</strong></p>
+
+<h4>複数周波数の組み合わせ</h4>
+
+<pre><code>もし高周波だけだと：
+  位置1と位置101で同じ回転角度になる可能性（周期の繰り返し）
+  → 遠い位置を区別できない
+
+もし低周波だけだと：
+  位置1と位置2がほぼ同じ回転角度
+  → 近い位置を区別できない
+
+両方組み合わせると：
+  高周波ペア → 近距離の位置関係を捉える
+  低周波ペア → 長距離の位置関係を捉える
+  → 全てのスケールの位置関係を同時に表現できる</code></pre>
+
+<p>これは<strong>フーリエ変換</strong>の考え方と同じです。複数の周波数の波を重ね合わせることで、任意の位置情報を表現できます。</p>
+
+<h4>なぜ「回転」が選ばれたのか：ノルム保存</h4>
+
+<p>
+    回転が選ばれた理由は<strong>ノルム（ベクトルの長さ）を保存する</strong>からです。
+</p>
+
+<pre><code>回転前のベクトル: (3, 4)  → ノルム = √(3² + 4²) = 5
+    ↓ 45度回転
+回転後のベクトル: (-0.7, 4.9) → ノルム = √(0.7² + 4.9²) = 5
+
+→ 回転してもベクトルの長さは変わらない</code></pre>
+
+<p>
+    内積の公式は $\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}| \times |\mathbf{b}| \times \cos(\theta)$ なので、ノルムが変わると内積値が歪みます。回転なら意味情報（ノルム）を保ちながら位置情報（角度）を追加できます。
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>操作</th>
+            <th>ノルム</th>
+            <th>結果</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>加算で位置を追加</td><td>変わる可能性</td><td>意味情報が歪む</td></tr>
+        <tr><td>スケーリング</td><td>変わる</td><td>意味情報が歪む</td></tr>
+        <tr><td><strong>回転</strong></td><td><strong>保存</strong></td><td><strong>意味情報が保たれる</strong></td></tr>
+    </tbody>
+</table>
+
+<h3>MRoPE (Multi-dimensional RoPE)</h3>
+
+<p>
+    テキストは1次元（シーケンス位置のみ）ですが、画像・動画は複数次元の位置を持ちます。
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>モダリティ</th>
+            <th>位置情報</th>
+            <th>次元数</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>テキスト</td><td>$p=1, 2, 3, ...$</td><td>1次元</td></tr>
+        <tr><td>画像</td><td>$(h, w)$</td><td>2次元</td></tr>
+        <tr><td>動画</td><td>$(t, h, w)$</td><td>3次元</td></tr>
+    </tbody>
+</table>
+
+<h4>MRoPEの仕組み</h4>
+
+<pre><code>動画フレームの位置: (t=5, h=10, w=20)
+
+各次元ペアに対して、対応する軸の位置で回転:
+  ペア0: 時間軸 → 5×θ₀ で回転
+  ペア1: 高さ軸 → 10×θ₁ で回転
+  ペア2: 幅軸  → 20×θ₂ で回転
+  ...</code></pre>
+
+<h4>元のMRoPEの問題点</h4>
+
+<p>
+    周波数を連続的に分割していたため、各軸が使える周波数帯が偏る（スペクトル不均衡）という問題がありました。
+</p>
+
+<pre><code>従来のMRoPE:
+次元 0-20  → 時間軸用（低周波数帯）
+次元 21-40 → 高さ軸用（中周波数帯）
+次元 41-60 → 幅軸用（高周波数帯）
+
+→ 長距離の関係を捉える能力が軸によって異なる</code></pre>
+
+<h3>Interleaved-MRoPE</h3>
+
+<h4>解決策: 交互配置</h4>
+
+<p>
+    周波数をラウンドロビンで交互に割り当てることで、各軸が均等に全周波数帯を使えるようにします。
+</p>
+
+<pre><code>従来のMRoPE:
+次元: [0,1,2,...,20] [21,22,...,40] [41,42,...,60]
+軸:   [時間時間時間...]  [高さ高さ高さ...]   [幅幅幅...]
+
+Interleaved-MRoPE:
+次元: [0] [1] [2] [3] [4] [5] [6] [7] [8] ...
+軸:   [時] [高] [幅] [時] [高] [幅] [時] [高] [幅] ...</code></pre>
+
+<h4>具体例: 動画フレームの位置 (t=10, h=64, w=128)</h4>
+
+<pre><code>次元0 → 時間軸 → 10 × θ₀ で回転
+次元1 → 高さ軸 → 64 × θ₁ で回転
+次元2 → 幅軸   → 128 × θ₂ で回転
+次元3 → 時間軸 → 10 × θ₃ で回転
+次元4 → 高さ軸 → 64 × θ₄ で回転
+次元5 → 幅軸   → 128 × θ₅ で回転
+... (繰り返し)</code></pre>
+
+<h4>効果</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>指標</th>
+            <th>従来のMRoPE</th>
+            <th>Interleaved-MRoPE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>256Kコンテキストでの動画理解</td><td>性能低下</td><td>安定</td></tr>
+        <tr><td>1Mトークンでのneedle検索</td><td>&lt;50%</td><td>&gt;99.5%</td></tr>
+        <tr><td>動画ベンチマーク</td><td>ベースライン</td><td>+1〜2ポイント</td></tr>
+    </tbody>
+</table>
+
+<h3>RoPEとコサイン類似度の関係</h3>
+
+<p>
+    RoPE系の位置エンコーディングは、Embeddingモデルでコサイン類似度が使える理由に繋がっています。
+</p>
+
+<h4>回転操作の特性</h4>
+
+<ul>
+    <li>ノルム（ベクトルの長さ）を保存する</li>
+    <li>内積の計算で相対位置が自然に反映される</li>
+</ul>
+
+<h4>なぜコサイン類似度と相性が良いのか</h4>
+
+$$
+\text{コサイン類似度} = \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{a}| \times |\mathbf{b}|} = \text{正規化された内積}
+$$
+
+<p>
+    RoPEの回転はノルムを変えないため、内積ベースの類似度計算と自然に適合します。
+</p>
+
+<h3>まとめ</h3>
+
+<pre><code>RoPE（テキスト用）
+  ↓ 位置次元を拡張
+MRoPE（画像・動画用）
+  ↓ 周波数配置を改善
+Interleaved-MRoPE（Qwen3-VL採用）</code></pre>
+
+<table>
+    <thead>
+        <tr>
+            <th>手法</th>
+            <th>位置次元</th>
+            <th>用途</th>
+            <th>特徴</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>RoPE</td><td>1次元</td><td>テキスト</td><td>相対位置を内積で表現</td></tr>
+        <tr><td>MRoPE</td><td>2〜3次元</td><td>画像・動画</td><td>複数軸の位置を扱う</td></tr>
+        <tr><td>Interleaved-MRoPE</td><td>2〜3次元</td><td>画像・動画</td><td>周波数を均等配分、長文脈に強い</td></tr>
+    </tbody>
+</table>
+
+<h3>参考文献</h3>
+
+<ul>
+    <li>Su, J., Lu, Y., Pan, S., Murtadha, A., Wen, B., & Liu, Y. (2021). <a href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noopener">RoFormer: Enhanced Transformer with Rotary Position Embedding</a>. arXiv:2104.09864.</li>
+    <li>Qwen Team. <a href="https://arxiv.org/abs/2511.21631" target="_blank" rel="noopener">Qwen3-VL Technical Report</a>. arXiv:2511.21631.</li>
+</ul>
+
+        </div>
+        
+            
+            
+            
+                
+            
+                
+            
+                
+                    
+                    
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+            <div class="article-nav-links">
+                
+                
+            </div>
+        
+        <div class="article-navigation">
+            <a class="back-to-list" href="/articles.html">記事一覧に戻る</a>
+        </div>
+    </div>
+</section>
+
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Masato Izumi Portfolio</p>
+            <a class="footer-back-to-top" href="#top" aria-label="ページの先頭へ戻る">トップへ戻る</a>
+        </div>
+    </footer>
+
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
+    <script src="/js/main.js"></script>
+    
+</body>
+</html>

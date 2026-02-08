@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    
+    
+    
+        
+    
+
+    <title>ViT（Vision Transformer）画像埋め込み解説 - Masato Izumi Portfolio</title>
+    <meta name="description" content="Vision Transformer（ViT）における画像の埋め込み方法を解説。テキストとの対比を通じて、パッチ分割・線形投影・位置エンコーディングの仕組みを理解します。">
+    <link rel="canonical" href="https://masatoizumi1771.github.io/articles/vit-embedding/">
+    <meta property="og:title" content="ViT（Vision Transformer）画像埋め込み解説 - Masato Izumi Portfolio">
+    <meta property="og:description" content="Vision Transformer（ViT）における画像の埋め込み方法を解説。テキストとの対比を通じて、パッチ分割・線形投影・位置エンコーディングの仕組みを理解します。">
+    <meta property="og:url" content="https://masatoizumi1771.github.io/articles/vit-embedding/">
+    
+        <meta property="og:type" content="article">
+    
+    
+        <meta property="og:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ViT（Vision Transformer）画像埋め込み解説 - Masato Izumi Portfolio">
+    <meta name="twitter:description" content="Vision Transformer（ViT）における画像の埋め込み方法を解説。テキストとの対比を通じて、パッチ分割・線形投影・位置エンコーディングの仕組みを理解します。">
+    
+        <meta name="twitter:image" content="https://masatoizumi1771.github.io/images/profile.png">
+    
+    <meta name="search-index" content="/search-index.json">
+
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        
+        "headline": "ViT（Vision Transformer）画像埋め込み解説",
+        "datePublished": "2026-02-08",
+        "author": {
+            "@type": "Person",
+            "name": "Masato Izumi",
+            "url": "https://masatoizumi1771.github.io"
+        },
+        "publisher": {
+            "@type": "Person",
+            "name": "Masato Izumi"
+        },
+        "description": "Vision Transformer（ViT）における画像の埋め込み方法を解説。テキストとの対比を通じて、パッチ分割・線形投影・位置エンコーディングの仕組みを理解します。",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://masatoizumi1771.github.io/articles/vit-embedding/"
+        }
+        
+    }
+    </script>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
+</head>
+<body id="top">
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="site-title"><a href="/index.html">Masato Izumi Portfolio</a></h1>
+            <nav class="nav" id="nav">
+                <ul class="nav-list">
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/index.html">ホーム</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research_achievements.html">研究実績</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/research.html">研究</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/skills.html">スキル</a>
+                        </li>
+                    
+                        
+                        
+                            
+                        
+                        <li class="nav-item">
+                            <a class="active-link" href="/articles.html">研究記事</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/other.html">その他</a>
+                        </li>
+                    
+                        
+                        
+                        <li class="nav-item">
+                            <a class="" href="/search.html">検索</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+            <button class="theme-toggle" aria-label="テーマ切り替え" title="ダークモード切り替え">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <button class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="nav">
+                <span class="menu-icon"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+
+
+<section class="article-detail section">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="パンくずリスト">
+            <a href="/index.html">ホーム</a>
+            <span aria-hidden="true">/</span>
+            <a href="/articles.html">研究記事</a>
+            <span aria-hidden="true">/</span>
+            <span class="breadcrumb-current">ViT（Vision Transformer）画像埋め込み解説</span>
+        </nav>
+        <h2 class="article-title">ViT（Vision Transformer）画像埋め込み解説</h2>
+        <div class="article-meta-info">
+            <p class="article-meta">公開日: 2026.02.08</p>
+            <p class="reading-time" id="reading-time"></p>
+        </div>
+        
+            
+            
+                <ul class="tag-list" aria-label="タグ">
+                    
+                        <li class="tag-pill">Transformer</li>
+                    
+                        <li class="tag-pill">機械学習</li>
+                    
+                        <li class="tag-pill">ViT</li>
+                    
+                        <li class="tag-pill">画像処理</li>
+                    
+                </ul>
+            
+        
+        <nav class="toc" id="toc" aria-label="目次">
+            <h3 class="toc-title">目次</h3>
+            <ul class="toc-list" id="toc-list"></ul>
+        </nav>
+        <div class="article-body">
+            
+<p>
+    本記事では、Vision Transformer（ViT）がどのように画像をベクトル化するかを解説します。テキストの埋め込みと対比しながら、画像特有の処理を理解していきます。
+</p>
+
+<h3>テキストと画像の対比</h3>
+
+<pre><code>テキスト:
+  "今日は晴れ" → トークン化 → ["今日", "は", "晴れ"] → 埋め込み層 → ベクトル列
+
+画像:
+  [画像データ] → パッチ分割 → [パッチ1, パッチ2, ...] → 線形投影 → ベクトル列</code></pre>
+
+<p>
+    <strong>画像では「パッチ」がトークンに相当します。</strong>
+</p>
+
+<h3>画像のパッチ分割</h3>
+
+<h4>ステップ1: 画像をグリッド状に分割</h4>
+
+<pre><code>元の画像 (224×224ピクセル)
+┌────┬────┬────┬────┬────┬────┬────┐
+│    │    │    │    │    │    │    │  ...
+├────┼────┼────┼────┼────┼────┼────┤
+│    │    │    │    │    │    │    │  ...
+├────┼────┼────┼────┼────┼────┼────┤
+...
+
+16×16ピクセルのパッチに分割
+→ 224 ÷ 16 = 14
+→ 14 × 14 = 196パッチ</code></pre>
+
+<h4>ステップ2: 各パッチをフラット化</h4>
+
+<pre><code>1つのパッチ (16×16ピクセル、RGB 3チャンネル)
+  → 16 × 16 × 3 = 768個の数値
+
+パッチのピクセル値:
+┌─────────────────┐
+│ R G B R G B ... │  ← 1行目のピクセル
+│ R G B R G B ... │  ← 2行目のピクセル
+│ ...             │
+└─────────────────┘
+  ↓ フラット化
+[r₀, g₀, b₀, r₁, g₁, b₁, ..., r₂₅₅, g₂₅₅, b₂₅₅]  ← 768次元ベクトル</code></pre>
+
+<h3>線形投影（Patch Embedding）</h3>
+
+<h4>テキストとの違い</h4>
+
+<pre><code>テキスト:
+  トークンID → 埋め込み層（テーブル参照）→ ベクトル
+  ※ 離散的なID → ルックアップ
+
+画像:
+  パッチ（768次元）→ 線形投影（行列積）→ ベクトル（768次元など）
+  ※ 連続的な数値 → 行列演算</code></pre>
+
+<h4>線形投影の仕組み</h4>
+
+$$
+\text{出力} = \text{パッチベクトル} \times W + b
+$$
+
+<pre><code>パッチベクトル (768次元)     投影行列 W (768×768)      出力 (768次元)
+[r₀, g₀, b₀, ..., b₂₅₅]  ×  [学習されるパラメータ]  =  [x₀, x₁, ..., x₇₆₇]
+
+入力:  生のピクセル値（意味を持たない数値の羅列）
+出力:  意味的な特徴を捉えたベクトル</code></pre>
+
+<h4>なぜテーブル参照ではなく行列積か</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>テキスト</th>
+            <th>画像</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>入力の性質</td><td>離散的（"猫" or "犬"、中間はない）</td><td>連続的（0〜255の任意の値）</td></tr>
+        <tr><td>パターン数</td><td>有限（語彙5万語など）</td><td>無限（パッチのパターンは無限）</td></tr>
+        <tr><td>埋め込み方法</td><td>テーブルで全パターンを持てる</td><td>関数（行列積）で変換する必要がある</td></tr>
+    </tbody>
+</table>
+
+<h3>全体の流れ</h3>
+
+<pre><code>画像 (224×224×3)
+    ↓ パッチ分割 (16×16)
+196個のパッチ (各16×16×3 = 768ピクセル)
+    ↓ フラット化
+196個のベクトル (各768次元)
+    ↓ 線形投影 (学習パラメータ)
+196個の埋め込みベクトル (各768次元)
+    ↓ [CLS]トークンを先頭に追加
+197個のベクトル
+    ↓ 位置エンコーディング追加
+197個の位置情報付きベクトル
+    ↓ Transformer Encoder
+197個の出力ベクトル
+    ↓ [CLS]トークンの出力を使用
+1つの画像埋め込み (768次元)</code></pre>
+
+<h3>[CLS]トークンとは</h3>
+
+<p>
+    画像全体を代表するための特別なトークンです。
+</p>
+
+<pre><code>入力:
+  [CLS] [パッチ1] [パッチ2] ... [パッチ196]
+    ↓ Transformer (Self-Attention)
+  [CLS'] [パッチ1'] [パッチ2'] ... [パッチ196']
+
+[CLS]トークンはAttentionで全パッチの情報を集約
+→ [CLS']が画像全体の表現になる</code></pre>
+
+<h4>なぜ[CLS]を使うのか</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>方法</th>
+            <th>説明</th>
+            <th>欠点</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>全パッチの平均</td>
+            <td>単純な平均プーリング</td>
+            <td>重要な部分も重要でない部分も同じ重み</td>
+        </tr>
+        <tr>
+            <td>[CLS]トークン</td>
+            <td>Attentionで重要なパッチに注目</td>
+            <td>学習で「どこを見るべきか」を獲得</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>位置エンコーディング（画像版）</h3>
+
+<h4>なぜ必要か</h4>
+
+<pre><code>パッチをフラット化すると位置情報が失われる:
+
+元の画像:
+  [顔]  [空]
+  [体]  [木]
+
+フラット化後:
+  [顔] [空] [体] [木]  ← どれが隣同士かわからない</code></pre>
+
+<h4>画像での位置エンコーディング</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>方法</th>
+            <th>説明</th>
+            <th>アプローチ</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1次元の位置</td>
+            <td>パッチ0, パッチ1, パッチ2, ...</td>
+            <td>テキストと同じRoPE的アプローチ</td>
+        </tr>
+        <tr>
+            <td>2次元の位置</td>
+            <td>パッチ(0,0), パッチ(0,1), パッチ(1,0), ...</td>
+            <td>MRoPE的アプローチ（高さと幅を別々に）</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>テキストと画像の埋め込み比較</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>項目</th>
+            <th>テキスト</th>
+            <th>画像 (ViT)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>入力単位</td><td>トークン（単語/サブワード）</td><td>パッチ（16×16ピクセル）</td></tr>
+        <tr><td>入力形式</td><td>離散的（ID）</td><td>連続的（ピクセル値）</td></tr>
+        <tr><td>埋め込み方法</td><td>テーブル参照</td><td>線形投影（行列積）</td></tr>
+        <tr><td>位置情報</td><td>1次元（シーケンス位置）</td><td>1次元 or 2次元（行・列）</td></tr>
+        <tr><td>代表ベクトル</td><td>[EOS]や平均</td><td>[CLS]や平均</td></tr>
+    </tbody>
+</table>
+
+<h3>動的解像度（Qwen2-VL以降）</h3>
+
+<p>
+    従来のViTは全ての画像を固定サイズにリサイズしていましたが、最新のモデルでは動的解像度に対応しています。
+</p>
+
+<pre><code>従来のViT:
+  全ての画像を224×224にリサイズ → 196パッチ固定
+
+Qwen2-VL以降:
+  画像サイズに応じてパッチ数が変動
+  - 小さい画像: 少ないパッチ
+  - 大きい画像: 多いパッチ（最大16,384パッチ）
+
+  解像度は28の倍数に調整
+  パッチサイズは14×14ピクセル</code></pre>
+
+<h4>例</h4>
+
+<pre><code>画像サイズ 448×448:
+  → 448 ÷ 14 = 32
+  → 32 × 32 = 1,024パッチ
+
+画像サイズ 224×224:
+  → 224 ÷ 14 = 16
+  → 16 × 16 = 256パッチ</code></pre>
+
+<h3>マルチモーダル（テキスト+画像）の統合</h3>
+
+<pre><code>テキスト: "この画像に写っているのは"
+画像:     [猫の画像]
+
+処理:
+  テキスト → トークン埋め込み → [T₁] [T₂] [T₃] [T₄] [T₅]
+  画像     → パッチ埋め込み   → [I₁] [I₂] [I₃] ... [I₁₉₆]
+
+統合（連結）:
+  [T₁] [T₂] [T₃] [T₄] [T₅] [I₁] [I₂] [I₃] ... [I₁₉₆]
+                            ↑
+                        テキストと画像を同じシーケンスに
+
+→ Transformerで一緒に処理
+→ テキストと画像の関係を学習</code></pre>
+
+<h3>まとめ</h3>
+
+<pre><code>テキスト埋め込み:
+  単語 → ID → テーブル参照 → ベクトル
+
+画像埋め込み (ViT):
+  画像 → パッチ分割 → 線形投影 → ベクトル
+
+共通点:
+  - 入力を「トークン列」として扱う
+  - Transformerで処理できる形式に変換
+  - 位置エンコーディングで位置情報を追加
+
+違い:
+  - テキストは離散（テーブル）、画像は連続（行列積）
+  - 画像は2次元の位置情報を持つ</code></pre>
+
+<h3>参考文献</h3>
+
+<ul>
+    <li>Dosovitskiy, A., et al. (2020). <a href="https://arxiv.org/abs/2010.11929" target="_blank" rel="noopener">An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</a>. ICLR 2021.</li>
+    <li>Wang, P., et al. (2024). <a href="https://arxiv.org/abs/2409.12191" target="_blank" rel="noopener">Qwen2-VL: Enhancing Vision-Language Model's Perception of the World at Any Resolution</a>. arXiv:2409.12191.</li>
+</ul>
+
+        </div>
+        
+            
+            
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+                    
+                    
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+            <div class="article-nav-links">
+                
+                
+            </div>
+        
+        <div class="article-navigation">
+            <a class="back-to-list" href="/articles.html">記事一覧に戻る</a>
+        </div>
+    </div>
+</section>
+
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Masato Izumi Portfolio</p>
+            <a class="footer-back-to-top" href="#top" aria-label="ページの先頭へ戻る">トップへ戻る</a>
+        </div>
+    </footer>
+
+    <button class="back-to-top-fixed" aria-label="ページの先頭へ戻る" title="トップへ戻る">↑</button>
+    <script src="/js/main.js"></script>
+    
+</body>
+</html>
